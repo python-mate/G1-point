@@ -31,7 +31,9 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
     # Web ページを取得します。
     # NOTE: この URL は情報がなくとも 200 が返ります。
     #       情報のないページのときの対応は pick_payout_details の中で行っています。
-    response = requests.get(f'https://race.netkeiba.com/race/result.html?race_id={race_id}')
+    url = f'https://race.netkeiba.com/race/result.html?race_id={race_id}'
+    logger.debug(f'Target page is {url}')
+    response = requests.get(url)
     assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
 
     # NOTE: このページには <meta charset="EUC-JP"> が設定されています。 encoding をそれに合わせます。
