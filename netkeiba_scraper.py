@@ -5,7 +5,7 @@ netkeiba ウェブサイトからレース結果を取得するスクリプト�
 
 # Third-party modules.
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, element
 
 # User modules.
 import utils
@@ -39,7 +39,10 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
     #       情報のないページにアクセスしてしまったら何らかの方法で検知したい。
 
     html_source = get_dummy_html_source()
-    print(html_source)
+
+    # 「払い戻し」情報を抽出します。
+    payout_information = pick_payout_details(html_source)
+    print(payout_information)
 
 
 def get_dummy_html_source():
@@ -49,6 +52,62 @@ def get_dummy_html_source():
 
     with open('./dummy.html', 'r') as f:
         return f.read()
+
+
+def pick_payout_details(html_source: str) -> dict:
+    """html source から、抽出したい情報を取得して dict で返します。
+    今回、 html から取得する情報が多く、
+    ビジネスロジックが複雑になるので関数を分けています。
+
+    必要なのは
+    - 単勝の価格 --> tr.Tansho > td.Payout > span
+    - 馬連の価格 --> tr.Umaren > td.Payout > span
+    - 馬単の価格 --> tr.Umatan > td.Payout > span
+    - 3連複の価格 --> tr.Fuku3 > td.Payout > span
+    - 3連単の価格 --> tr.Tan3 > td.Payout > span
+    - 順位 --> 複勝から取得 tr.Fukusho > td.Result > (複数の) div > span
+    """
+
+    soup = BeautifulSoup(html_source, 'lxml')
+
+    # 「単勝」の価格を取得します。
+    tansho_payout = soup.select_one('tr.Tansho > td.Payout > span')
+    # 「馬連」の価格を取得します。
+    umaren_payout = soup.select_one('tr.Umaren > td.Payout > span')
+    # 「馬単」の価格を取得します。
+    umatan_payout = soup.select_one('tr.Umatan > td.Payout > span')
+    # 「3連複」の価格を取得します。
+    fuku3_payout = soup.select_one('tr.Fuku3 > td.Payout > span')
+    # 「3連単」の価格を取得します。
+    tan3_payout = soup.select_one('tr.Tan3 > td.Payout > span')
+
+    # 金額は int が扱いやすいと思うので、 int にします。
+    def foo(span: element.Tag) -> int:
+        return int(span.get_text().replace(',', '').replace('円', ''))
+    tansho_payout = foo(tansho_payout)
+    umaren_payout = foo(umaren_payout)
+    umatan_payout = foo(umatan_payout)
+    fuku3_payout = foo(fuku3_payout)
+    tan3_payout = foo(tan3_payout)
+
+    # 順位を取得します。
+    # tr.Fukusho > td.Result > (複数の) div > span
+    ranking = []
+    for div in soup.select('tr.Fukusho > td.Result > div'):
+        horse_number = div.select_one('span').get_text()
+        if horse_number:
+            ranking.append(int(horse_number))
+
+    return {
+        'tansho_payout': tansho_payout,
+        'umaren_payout': umaren_payout,
+        'umatan_payout': umatan_payout,
+        'fuku3_payout': fuku3_payout,
+        'tan3_payout': tan3_payout,
+        'ranking1': ranking[0],
+        'ranking2': ranking[1],
+        'ranking3': ranking[2],
+    }
 
 
 if __name__ == '__main__':
