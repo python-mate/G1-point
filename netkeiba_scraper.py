@@ -16,12 +16,8 @@ logger = utils.get_my_logger(__name__)
 
 def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: str):
 
-    # 引数チェックです。桁数をチェック。
-    assert len(year) == 4, 'Argument "year" must be 4 characters.'
-    assert len(racetrack_code) == 2, 'Argument "racetrack_code" must be 2 characters.'
-    assert len(times) == 2, 'Argument "times" must be 2 characters.'
-    assert len(date) == 2, 'Argument "date" must be 2 characters.'
-    assert len(race_number) == 2, 'Argument "race_number" must be 2 characters.'
+    # 引数チェックです。
+    __scrape_arguments_check(year, racetrack_code, times, date, race_number)
 
     # 対象の race_id を構築します。
     # NOTE: おそらく [西暦][競馬場コード][第何回][何日][何レース] のフォーマットだと予想されています。
@@ -33,16 +29,16 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
     #       情報のないページのときの対応は pick_payout_details の中で行っています。
     url = f'https://race.netkeiba.com/race/result.html?race_id={race_id}'
     logger.debug(f'Target page is {url}')
-    response = requests.get(url)
-    assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
+    # response = requests.get(url)
+    # assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
 
     # NOTE: このページには <meta charset="EUC-JP"> が設定されています。 encoding をそれに合わせます。
-    response.encoding = response.apparent_encoding
-    html_source = response.text
+    # response.encoding = response.apparent_encoding
+    # html_source = response.text
 
     # NOTE: テスト中に何度もスクレイピングをかけるのは気が引けるので、
     #       開発中はコレ使ってー。そして上の requests はコメントアウトを。
-    # html_source = get_dummy_html_source()
+    html_source = get_dummy_html_source()
 
     # 「払い戻し」情報を抽出します。
     # NOTE: これは、いつ構造が変わってもおかしくない html から情報を取得する処理です。
@@ -61,12 +57,24 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
     return payout_information
 
 
+def __scrape_arguments_check(year: str, racetrack_code: str, times: str, date: str, race_number: str):
+
+    # NOTE: 引数チェックが行数をくうのがイヤで、分離した関数です。
+
+    # 引数チェックです。桁数をチェック。
+    assert len(year) == 4, 'Argument "year" must be 4 characters.'
+    assert len(racetrack_code) == 2, 'Argument "racetrack_code" must be 2 characters.'
+    assert len(times) == 2, 'Argument "times" must be 2 characters.'
+    assert len(date) == 2, 'Argument "date" must be 2 characters.'
+    assert len(race_number) == 2, 'Argument "race_number" must be 2 characters.'
+
+
 def get_dummy_html_source():
     """テスト中に何度もスクレイピングをかけるのは気が引けるので、
     ローカルに DL した html source を返します。
     """
 
-    with open('./dummy2.html', 'r') as f:
+    with open('./dummy.html', 'r') as f:
         return f.read()
 
 
