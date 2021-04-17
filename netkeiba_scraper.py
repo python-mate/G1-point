@@ -18,6 +18,7 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
 
     # 引数チェックです。
     __scrape_arguments_check(year, racetrack_code, times, date, race_number)
+    logger.debug('Arguments checking passed.')
 
     # 対象の race_id を構築します。
     # NOTE: おそらく [西暦][競馬場コード][第何回][何日][何レース] のフォーマットだと予想されています。
@@ -26,38 +27,24 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
 
     # Web ページを取得します。
     # NOTE: この URL は情報がなくとも 200 が返ります。
-    #       情報のないページのときの対応は pick_payout_details の中で行っています。
+    #       情報のないページのときの対応は __pick_payout_details の中で行っています。
     url = f'https://race.netkeiba.com/race/result.html?race_id={race_id}'
     logger.debug(f'Target page is {url}')
-    # response = requests.get(url)
-    # assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
-
-    # NOTE: このページには <meta charset="EUC-JP"> が設定されています。 encoding をそれに合わせます。
-    # response.encoding = response.apparent_encoding
-    # html_source = response.text
+    html_source = __get_euc_jp_html_source(url)
 
     # NOTE: テスト中に何度もスクレイピングをかけるのは気が引けるので、
-    #       開発中はコレ使ってー。そして上の requests はコメントアウトを。
-    html_source = get_dummy_html_source()
+    #       開発中はコレ使ってー。そして上の html_source はコメントアウトを。
+    # html_source = __get_dummy_html_source()
 
-    # 「払い戻し」情報を抽出します。
-    # NOTE: これは、いつ構造が変わってもおかしくない html から情報を取得する処理です。
-    #       予測せぬエラーに備え、結果のチェックを行っています。
-    payout_information = pick_payout_details(html_source)
-
-    assert payout_information['tansho_payout'] >= 0, 'tansho_payout is invalid.'
-    assert payout_information['umaren_payout'] >= 0, 'umaren_payout is invalid.'
-    assert payout_information['umatan_payout'] >= 0, 'umatan_payout is invalid.'
-    assert payout_information['fuku3_payout'] >= 0, 'fuku3_payout is invalid.'
-    assert payout_information['tan3_payout'] >= 0, 'tan3_payout is invalid.'
-    assert payout_information['ranking1'] >= 0, 'ranking1 is invalid.'
-    assert payout_information['ranking2'] >= 0, 'ranking2 is invalid.'
-    assert payout_information['ranking3'] >= 0, 'ranking3 is invalid.'
+    # HTML から「払い戻し」情報を抽出します。
+    payout_information = __pick_payout_details(html_source)
+    logger.debug('Successfully got payout information.')
 
     return payout_information
 
 
-def __scrape_arguments_check(year: str, racetrack_code: str, times: str, date: str, race_number: str):
+def __scrape_arguments_check(
+        year: str, racetrack_code: str, times: str, date: str, race_number: str):
 
     # NOTE: 引数チェックが行数をくうのがイヤで、分離した関数です。
 
@@ -69,7 +56,18 @@ def __scrape_arguments_check(year: str, racetrack_code: str, times: str, date: s
     assert len(race_number) == 2, 'Argument "race_number" must be 2 characters.'
 
 
-def get_dummy_html_source():
+def __get_euc_jp_html_source(url: str):
+
+    response = requests.get(url)
+    assert response.status_code == 200, f'Failed to get {url}'
+
+    # NOTE: このページには <meta charset="EUC-JP"> が設定されています。 encoding をそれに合わせます。
+    response.encoding = response.apparent_encoding
+
+    return response.text
+
+
+def __get_dummy_html_source():
     """テスト中に何度もスクレイピングをかけるのは気が引けるので、
     ローカルに DL した html source を返します。
     """
@@ -78,7 +76,7 @@ def get_dummy_html_source():
         return f.read()
 
 
-def pick_payout_details(html_source: str) -> dict:
+def __pick_payout_details(html_source: str) -> dict:
     """html source から、抽出したい情報を取得して dict で返します。
     今回、 html から取得する情報が多く、
     ビジネスロジックが複雑になるので関数を分けています。
@@ -128,6 +126,15 @@ def pick_payout_details(html_source: str) -> dict:
         if horse_number:
             ranking.append(int(horse_number))
 
+    # NOTE: これは、いつ構造が変わってもおかしくない html から情報を取得する処理です。
+    #       予測せぬエラーに備え、結果のチェックを行っています。
+    assert tansho_payout >= 0, f'tansho_payout is invalid: {repr(tansho_payout)}'
+    assert umaren_payout >= 0, f'umaren_payout is invalid: {repr(umaren_payout)}'
+    assert umatan_payout >= 0, f'umatan_payout is invalid: {repr(umatan_payout)}'
+    assert fuku3_payout >= 0, f'fuku3_payout is invalid: {repr(fuku3_payout)}'
+    assert tan3_payout >= 0, f'tan3_payout is invalid: {repr(tan3_payout)}'
+    assert len(ranking) == 3, f'ranking does not contain 3 elements: {repr(ranking)}'
+
     return {
         'tansho_payout': tansho_payout,
         'umaren_payout': umaren_payout,
@@ -146,6 +153,6 @@ if __name__ == '__main__':
         racetrack_code='09',
         times='02',
         date='06',
-        race_number='21',
+        race_number='11',
     )
     logger.debug(payout_information)
