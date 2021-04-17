@@ -5,12 +5,14 @@ netkeiba ウェブサイトからレース結果を取得するスクリプト�
 
 # Third-party modules.
 import requests
-from bs4 import BeautifulSoup, element
+from bs4 import (
+    BeautifulSoup, element
+)
 
 # User modules.
 import utils
 
-# utils モジュール用のロガーを作成します。
+# このモジュール用のロガーを作成します。
 logger = utils.get_my_logger(__name__)
 
 
