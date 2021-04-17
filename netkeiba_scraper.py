@@ -29,20 +29,34 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
     logger.debug(f'Run with race_id {race_id}')
 
     # Web ページを取得します。
-    # response = requests.get(f'https://race.netkeiba.com/race/result.html?race_id={race_id}')
-    # assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
+    # NOTE: この URL は情報がなくとも 200 が返ります。
+    #       情報のないページのときの対応は pick_payout_details の中で行っています。
+    response = requests.get(f'https://race.netkeiba.com/race/result.html?race_id={race_id}')
+    assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
 
     # NOTE: このページには <meta charset="EUC-JP"> が設定されています。 encoding をそれに合わせます。
-    # response.encoding = response.apparent_encoding
+    response.encoding = response.apparent_encoding
+    html_source = response.text
 
-    # TODO: この URL は情報がなくとも 200 が返ります。
-    #       情報のないページにアクセスしてしまったら何らかの方法で検知したい。
-
-    html_source = get_dummy_html_source()
+    # NOTE: テスト中に何度もスクレイピングをかけるのは気が引けるので、
+    #       開発中はコレ使ってー。そして上の requests はコメントアウトを。
+    # html_source = get_dummy_html_source()
 
     # 「払い戻し」情報を抽出します。
+    # NOTE: これは、いつ構造が変わってもおかしくない html から情報を取得する処理です。
+    #       予測せぬエラーに備え、結果のチェックを行っています。
     payout_information = pick_payout_details(html_source)
-    print(payout_information)
+
+    assert payout_information['tansho_payout'] >= 0, 'tansho_payout is invalid.'
+    assert payout_information['umaren_payout'] >= 0, 'umaren_payout is invalid.'
+    assert payout_information['umatan_payout'] >= 0, 'umatan_payout is invalid.'
+    assert payout_information['fuku3_payout'] >= 0, 'fuku3_payout is invalid.'
+    assert payout_information['tan3_payout'] >= 0, 'tan3_payout is invalid.'
+    assert payout_information['ranking1'] >= 0, 'ranking1 is invalid.'
+    assert payout_information['ranking2'] >= 0, 'ranking2 is invalid.'
+    assert payout_information['ranking3'] >= 0, 'ranking3 is invalid.'
+
+    return payout_information
 
 
 def get_dummy_html_source():
@@ -50,7 +64,7 @@ def get_dummy_html_source():
     ローカルに DL した html source を返します。
     """
 
-    with open('./dummy.html', 'r') as f:
+    with open('./dummy2.html', 'r') as f:
         return f.read()
 
 
@@ -69,6 +83,12 @@ def pick_payout_details(html_source: str) -> dict:
     """
 
     soup = BeautifulSoup(html_source, 'lxml')
+
+    # 適切な html source かどうかを確認します。
+    assert soup.select_one('tr.Tansho > td.Payout > span') is not None, (
+        'Can not get "Tansho" value.'
+        ' HTML structure is not what we expect. or requested page does not have payout information.'
+    )
 
     # 「単勝」の価格を取得します。
     tansho_payout = soup.select_one('tr.Tansho > td.Payout > span')
@@ -104,17 +124,18 @@ def pick_payout_details(html_source: str) -> dict:
         'umatan_payout': umatan_payout,
         'fuku3_payout': fuku3_payout,
         'tan3_payout': tan3_payout,
-        'ranking1': ranking[0],
-        'ranking2': ranking[1],
-        'ranking3': ranking[2],
+        'ranking1': ranking[0] if len(ranking) >= 1 else -1,
+        'ranking2': ranking[1] if len(ranking) >= 2 else -1,
+        'ranking3': ranking[2] if len(ranking) >= 3 else -1,
     }
 
 
 if __name__ == '__main__':
-    scrape(
+    payout_information = scrape(
         year='2021',
         racetrack_code='09',
         times='02',
         date='06',
-        race_number='11',
+        race_number='21',
     )
+    logger.debug(payout_information)
