@@ -29,9 +29,26 @@ def scrape(year: str, racetrack_code: str, times: str, date: str, race_number: s
     logger.debug(f'Run with race_id {race_id}')
 
     # Web ページを取得します。
-    # https://race.netkeiba.com/race/result.html?race_id=202109020611
+    # response = requests.get(f'https://race.netkeiba.com/race/result.html?race_id={race_id}')
+    # assert response.status_code == 200, f'Failed to get information of race_id={race_id}'
 
-    pass
+    # NOTE: このページには <meta charset="EUC-JP"> が設定されています。 encoding をそれに合わせます。
+    # response.encoding = response.apparent_encoding
+
+    # TODO: この URL は情報がなくとも 200 が返ります。
+    #       情報のないページにアクセスしてしまったら何らかの方法で検知したい。
+
+    html_source = get_dummy_html_source()
+    print(html_source)
+
+
+def get_dummy_html_source():
+    """テスト中に何度もスクレイピングをかけるのは気が引けるので、
+    ローカルに DL した html source を返します。
+    """
+
+    with open('./dummy.html', 'r') as f:
+        return f.read()
 
 
 if __name__ == '__main__':
