@@ -9,7 +9,7 @@ Spread Sheet にきちんと格納されるように、関数 send を作って�
 """
 
 
-def send(race_held_yyyy_mm_dd, numbers_str):
+def send(race_held_yyyy_mm_dd, race_result):
 
     # ここを埋めてほしい。
 
