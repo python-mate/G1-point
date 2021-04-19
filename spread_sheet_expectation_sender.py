@@ -15,7 +15,8 @@ def send(user_name, numbers_str):
 
     # この関数が終わるとき、データが Spread Sheet にきちんと格納されるように、作ってほしい。
 
-    pass
+    # SpreadSheet に格納したら、「どの日付の、どのレースの予想として格納したか」を return してください。
+    return '2020-12-26', 'ホープフルステークス'
 
 
 if __name__ == '__main__':
