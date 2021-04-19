@@ -9,7 +9,7 @@ print されるように、関数 retreive を作ってください!
 """
 
 
-def retreive(race_number):
+def retreive(race_held_yyyy_mm_dd):
 
     # ここを埋めてほしい。
 
@@ -18,4 +18,4 @@ def retreive(race_number):
 
 
 if __name__ == '__main__':
-    retreive('65')
+    retreive('2020-11-20')
