@@ -1,0 +1,28 @@
+name: Deploy flask_line_receiver.py to Heroku
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deployment-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Create requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv --upgrade-strategy=only-if-needed
+          pipenv lock -r > requirements.txt
+
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}  # required
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}  # required
+          heroku_email: ${{secrets.HEROKU_EMAIL}}  # required
