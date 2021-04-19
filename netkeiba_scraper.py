@@ -146,6 +146,8 @@ def __pick_payout_details(html_source: str) -> dict:
         'ranking1': ranking[0] if len(ranking) >= 1 else -1,
         'ranking2': ranking[1] if len(ranking) >= 2 else -1,
         'ranking3': ranking[2] if len(ranking) >= 3 else -1,
+
+        # TODO: 仕様変更じゃい!! 馬の名前も出す!! あとでやります。
     }
 
 
