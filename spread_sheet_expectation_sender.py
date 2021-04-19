@@ -9,7 +9,7 @@ Spread Sheet にきちんと格納されるように、関数 send を作って�
 """
 
 
-def send(user_name, numbers_str):
+def send(user_id, numbers_str):
 
     # ここを埋めてほしい。
 
@@ -20,4 +20,4 @@ def send(user_name, numbers_str):
 
 
 if __name__ == '__main__':
-    send('Satou', '1.4.6.18.89')
+    send('sample-id-12345', '1.4.6.18.89')
