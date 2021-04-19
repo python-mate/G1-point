@@ -10,6 +10,9 @@ lxml = "*"
 flask = "*"
 line-bot-sdk = "*"
 gunicorn = "*"
+gspread = "*"
+pandas = "*"
+oauth2client = "*"
 
 [dev-packages]
 
