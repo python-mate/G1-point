@@ -4,12 +4,12 @@
 
 python spread_sheet_result_sender.py
 
-したとき、一番下にあるデータが「レース 65 の着順」として
+したとき、一番下にあるデータが「レース yyyy-mm-dd の着順」として
 Spread Sheet にきちんと格納されるように、関数 send を作ってください!
 """
 
 
-def send(race_number, numbers_str):
+def send(race_held_yyyy_mm_dd, numbers_str):
 
     # ここを埋めてほしい。
 
@@ -19,7 +19,7 @@ def send(race_number, numbers_str):
 
 
 if __name__ == '__main__':
-    send('65', {
+    send('2020-11-20', {
         'tansho_payout': 360,
         'umaren_payout': 670,
         'umatan_payout': 1280,
@@ -29,5 +29,3 @@ if __name__ == '__main__':
         'ranking2': 18,
         'ranking3': 2,
     })
-
-
