@@ -120,13 +120,26 @@ def __pick_payout_details(html_source: str) -> dict:
     fuku3_payout = foo(fuku3_payout)
     tan3_payout = foo(tan3_payout)
 
-    # 順位を取得します。
-    # tr.Fukusho > td.Result > (複数の) div > span
-    ranking = []
-    for div in soup.select('tr.Fukusho > td.Result > div'):
-        horse_number = div.select_one('span').get_text()
-        if horse_number:
-            ranking.append(int(horse_number))
+    # 1,2,3位の情報を取得します。
+    # tr.FirstDisplay > td.Result_Num > div.Rank --> 順位
+    #                 > td.Num.Txt_C > div --> 馬番
+    #                 span.Horse_Name > a --> 馬名
+    rows = soup.select('tr.FirstDisplay')
+
+    # tr.FirstDisplay は1,2,3位に付与されている想定です。一応確認します。
+    assert len(rows) == 3, f'More than three tr.FirstDisplay detected: {len(rows)}'
+
+    # 1,2,3位の要素が取得できたので、具体的な値を取り出します。
+    # {1:1位の情報, 2:2位の情報, 3:3位の情報} の形式で dict にします。
+    ranking = {}
+    for tr in rows:
+        rank = int(tr.select_one('td.Result_Num > div.Rank').get_text())
+        horse_number = int(tr.select_one('td.Num.Txt_C > div').get_text())
+        horse_name = tr.select_one('span.Horse_Name > a').get_text()
+        ranking[rank] = dict(
+            horse_number=horse_number,
+            horse_name=horse_name,
+        )
 
     # NOTE: これは、いつ構造が変わってもおかしくない html から情報を取得する処理です。
     #       予測せぬエラーに備え、結果のチェックを行っています。
@@ -135,7 +148,7 @@ def __pick_payout_details(html_source: str) -> dict:
     assert umatan_payout >= 0, f'umatan_payout is invalid: {repr(umatan_payout)}'
     assert fuku3_payout >= 0, f'fuku3_payout is invalid: {repr(fuku3_payout)}'
     assert tan3_payout >= 0, f'tan3_payout is invalid: {repr(tan3_payout)}'
-    assert len(ranking) == 3, f'ranking does not contain 3 elements: {repr(ranking)}'
+    assert len(ranking.keys()) == 3, f'ranking does not contain 3 elements: {repr(ranking.keys())}'
 
     return {
         'tansho_payout': tansho_payout,
@@ -143,11 +156,12 @@ def __pick_payout_details(html_source: str) -> dict:
         'umatan_payout': umatan_payout,
         'fuku3_payout': fuku3_payout,
         'tan3_payout': tan3_payout,
-        'ranking1': ranking[0] if len(ranking) >= 1 else -1,
-        'ranking2': ranking[1] if len(ranking) >= 2 else -1,
-        'ranking3': ranking[2] if len(ranking) >= 3 else -1,
-
-        # TODO: 仕様変更じゃい!! 馬の名前も出す!! あとでやります。
+        'ranking1': ranking[1]['horse_number'],
+        'ranking1_name': ranking[1]['horse_name'],
+        'ranking2': ranking[2]['horse_number'],
+        'ranking2_name': ranking[2]['horse_name'],
+        'ranking3': ranking[3]['horse_number'],
+        'ranking3_name': ranking[3]['horse_name'],
     }
 
 
