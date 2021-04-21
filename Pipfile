@@ -13,6 +13,7 @@ gunicorn = "*"
 gspread = "*"
 pandas = "*"
 oauth2client = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
