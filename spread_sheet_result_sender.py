@@ -43,30 +43,49 @@ def send(race_held_yyyy_mm_dd, race_result):
     #ワークシートの選択
     worksheet = sh.worksheet(SP_SHEET)
 
-    # 一旦適当に書き込んでみる
-    worksheet.update_acell('G3', '12')
-    # writing_content = 
-    # #スプレットシートの全データを取得
-    # data = worksheet.get_all_values()
+    #スプレットシートの全データを取得
+    data = worksheet.get_all_values()
 
-    # #上から２列目を無視上から１列目をカラムとする表として扱う。
-    # df = pd.DataFrame(data[2:],columns=data[1])
+    ####################################
+    #pandasでindex番号を取得
+    #上から２列目を無視上から１列目をカラムとする。indexは開催年月日とする。
+    df = pd.DataFrame(data[2:],columns=data[1]).set_index('開催年月日')
 
-    # print(df)
+    # 開催日程と比較したいのでrace_held_yyyy_mm_ddを編集
+    acquisition_date = race_held_yyyy_mm_dd.replace('-','/')
+    # セルは、スプレッドシートのフォーマット状　取得したインデックスに３加算した値
+    cell_index_no = df.index.get_loc(acquisition_date)+3
+    
+    ####################################
+    # スプレッドシートに書き込んでいく。くそー絶対もっといい方法あるヤロー・・・
+    worksheet.update_acell('M' + str(cell_index_no), race_result['tansho_payout'])
+    worksheet.update_acell('N' + str(cell_index_no), race_result['umaren_payout'])
+    worksheet.update_acell('O' + str(cell_index_no), race_result['umatan_payout'])
+    worksheet.update_acell('P' + str(cell_index_no), race_result['fuku3_payout'])
+    worksheet.update_acell('Q' + str(cell_index_no), race_result['tan3_payout'])
+    worksheet.update_acell('G' + str(cell_index_no), race_result['ranking1'])
+    worksheet.update_acell('H' + str(cell_index_no), race_result['ranking1_name'])
+    worksheet.update_acell('I' + str(cell_index_no), race_result['ranking2'])
+    worksheet.update_acell('J' + str(cell_index_no), race_result['ranking2_name'])
+    worksheet.update_acell('K' + str(cell_index_no), race_result['ranking3'])
+    worksheet.update_acell('L' + str(cell_index_no), race_result['ranking3_name'])
 
-    # この関数が終わるとき、データが Spread Sheet にきちんと格納されるように、作ってほしい。
+    # この関数が終わるとき、データが Spread Sheet に【レース結果と払戻し情報】がきちんと格納されるように、作ってほしい。
 
     pass
 
 
 if __name__ == '__main__':
-    send('2020-11-20', {
-        'tansho_payout': 360,
+    send('2021-01-24', {
+        'tansho_payout': 480,
         'umaren_payout': 670,
         'umatan_payout': 1280,
         'fuku3_payout': 2660,
         'tan3_payout': 10400,
         'ranking1': 4,
+        'ranking1_name': 'paparemon',
         'ranking2': 18,
+        'ranking2_name': 'mamasenbai',
         'ranking3': 2,
+        'ranking3_name': 'red-sakuranbo',
     })
