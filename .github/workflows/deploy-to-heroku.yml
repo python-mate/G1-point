@@ -1,9 +1,11 @@
 name: Deploy flask_line_receiver.py to Heroku
 
 on:
-  push:
-    branches:
-      - main
+  # NOTE: 本 repository は Heroku 用のファイル以外をたくさん含みます。
+  #       であれば push trigger は不適切と考えました。
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:
