@@ -18,11 +18,11 @@ from time import sleep
 
 #LINE_idを元にシート名の辞書を作成する。
 seat_dict = {
-    'sample-id-1':'ササキ',
+    'U226ec6476abd3df33fe94a3fa9d3be56':'ササキ',
     'sample-id-2':'コバヤシ',
     'sample-d-3':'ウエハラ',
     'sample-id-4':'マツノ',
-    'sample-id-5':'アカミネ',
+    'U2f6d493948a0bbb82018a1b4fc661636':'アカミネ',
     'sample-id-6':'フクヤマ',
     'sample-id-7':'トヨシ',
     }
@@ -32,7 +32,7 @@ current_time = dt.now()
 current_time_str = current_time.strftime('%Y/%m/%d')
 #＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 #テスト的に日付を強制合わせする。
-current_time_str = '2020/12/26'
+current_time_str = '2021/04/18'
 #＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
 
@@ -48,7 +48,7 @@ def send(user_id, numbers_str):
     #認証情報設定
     #ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        '/Users/akamine/Documents/GitHub/G1-point/g1-point-7e93bd98712c.json',
+        'g1-point-7e93bd98712c.json',
         scope
         )
 
@@ -88,19 +88,11 @@ def send(user_id, numbers_str):
         cell.value = expected_no_list[i]
     worksheet.update_cells(expected_change_range)
 
-    # #一番近い日程（まだきていない)を予想の日程をしてindexを取得したい。
-    # worksheet.update_acell('H' + str(cell_index_no), expected_no_list[0])#◎
-    # worksheet.update_acell('I' + str(cell_index_no), expected_no_list[1])#○
-    # worksheet.update_acell('J' + str(cell_index_no), expected_no_list[2])#▲
-    # worksheet.update_acell('K' + str(cell_index_no), expected_no_list[3])#△
-    # worksheet.update_acell('L' + str(cell_index_no), expected_no_list[4])#☆
 
     #編集した開催年月日を取得。YYYY/mm/dd⇨YYYY-mm-ddの形へ変換して
     return_date = current_time_str.replace('/','-')
     #編集したレース名を取得
     edit_race_name = df.at[current_time_str,'レース名']
-
-
 
     # この関数が終わるとき、データが Spread Sheet の【各ユーザーのシートに予想印を】にきちんと格納されるように、作ってほしい。
 
@@ -109,4 +101,4 @@ def send(user_id, numbers_str):
 
 
 if __name__ == '__main__':
-    send('sample-id-2', '12.4.8.10.3')
+    send('sample-id-4', '10.5.13.12.1')

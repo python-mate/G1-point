@@ -31,7 +31,7 @@ scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/aut
 #認証情報設定
 #ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    '/Users/akamine/Documents/GitHub/G1-point/g1-point-7e93bd98712c.json',
+    'g1-point-7e93bd98712c.json',
     scope
     )
 
@@ -87,10 +87,19 @@ def retreive(race_held_yyyy_mm_dd):
             number_conversion = df_accurate_decision.at[acquisition_date,column_get_list].replace('¥','')
             number_conversion = number_conversion.replace(',','')
             accurate_decision += int(number_conversion)
-
+        #払戻情報があれば的中者としてprint_name_listにappendする。
         if accurate_decision > 0:
             print_name_list.append(seat_dict[seat_dict_key_list[_]])
+
         print(accurate_decision)
+
+
+
+    #的中報告のprint_nameを作成。
+    if len(print_name_list) > 0:
+        print_name = '\n'.join(print_name_list)
+    else:
+        print_name_list.append('今回的中者はいません!!\n次回のレースは頑張りましょう!!')
 
     # 開催年月日が一致するindex番号を取得
     # 次回のレース日程とレース名を取得
@@ -101,7 +110,7 @@ def retreive(race_held_yyyy_mm_dd):
 
     # この print の中に、データがきちんと入るように作ってほしい
 
-    print('【' + race_name + '的中報告】\n' + '\n'.join(print_name_list)
+    line_accurate_report = ('【' + race_name + '的中報告】\n' + print_name +'\n'
     +'\n'+'※次回のG1ポイントレースは、\n'
     + next_race_date + ':' + next_race_name + 'です。\n'
     +'\n【スプレッドシート URL】\n'+
@@ -109,5 +118,8 @@ def retreive(race_held_yyyy_mm_dd):
     )
 
 
+    return line_accurate_report
+
+
 if __name__ == '__main__':
-    retreive('2020-12-26')
+    retreive('2021-03-14')

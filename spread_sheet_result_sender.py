@@ -31,7 +31,7 @@ scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/aut
 #認証情報設定
 #ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    '/Users/akamine/Documents/GitHub/G1-point/g1-point-7e93bd98712c.json',
+    'g1-point-7e93bd98712c.json',
     scope
     )
 
@@ -186,16 +186,16 @@ def send(race_held_yyyy_mm_dd, race_result):
 
 
 if __name__ == '__main__':
-    send('2020-12-26', {
-        'tansho_payout': 210,
-        'umaren_payout': 680,
-        'umatan_payout': 910,
-        'fuku3_payout': 1900,
-        'tan3_payout': 5560,
-        'ranking1': 10,
-        'ranking1_name': 'ダノンザキッド',
+    send('2021-03-14', {
+        'tansho_payout': 22730,
+        'umaren_payout': 13570,
+        'umatan_payout': 62050,
+        'fuku3_payout': 34650,
+        'tan3_payout': 783010,
+        'ranking1': 5,
+        'ranking1_name': 'ギベオン',
         'ranking2': 1,
-        'ranking2_name': 'オーソクレース',
-        'ranking3': 2,
-        'ranking3_name': 'ヨーホーレイク',
+        'ranking2_name': 'デアリングタクト',
+        'ranking3': 10,
+        'ranking3_name': 'ポタジェ',
     })
