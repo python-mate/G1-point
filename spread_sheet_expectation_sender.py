@@ -32,7 +32,7 @@ current_time = dt.now()
 current_time_str = current_time.strftime('%Y/%m/%d')
 #＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 #テスト的に日付を強制合わせする。
-current_time_str = '2021/04/18'
+# current_time_str = '2021/04/17'
 #＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
 
@@ -76,9 +76,34 @@ def send(user_id, numbers_str):
     #上から２列目を無視上から１列目をカラムとする。indexは開催年月日とする。
     df = pd.DataFrame(data[2:],columns=data[1]).set_index('開催年月日')
 
+    #現在の年月日がスプレッドシートの開催年月日のデータと一致する値があるなら現在年月日を代入（問題なし)
+    if current_time_str in list(df.index.values):
+        edit_date = current_time_str
+    #現在の年月日がスプレッドシートの開催年月日のデータにない場合は、近い未来の日程を取得する。
+    else:
+        current_time_rep = current_time_str.replace('/','')
+        df_index_list = [ _.replace('/','') for _ in list(df.index.values)]
+        #下記変数に空のリストを定義。と空文字を定義。
+        date_survey_list_yyyy = date_survey_list_mm =date_survey_list_dd =[]
+        edit_date = ''
+        #①:年部分を比較し一致するデータのみリスト化
+        date_survey_list_yyyy =[yyyy for yyyy in df_index_list if current_time_rep[0:4] == yyyy[0:4]]
+        #②:月部分を比較し一致するデータのみリスト化
+        date_survey_list_mm =[mm for mm in date_survey_list_yyyy if current_time_rep[4:6] == mm[4:6]]
+        #③:日部分を比較し現在日程より先の日程のみリスト化する。
+        date_survey_list_dd =[dd for dd in date_survey_list_mm if int(current_time_rep[6:8]) < int(dd[6:8])]
+        #④:③に値があるなら一番若いindexの値を編集する日程とする。
+        if len(date_survey_list_dd) > 0:
+            edit_date = str(date_survey_list_dd[0])[0:4]+'/'+ str(date_survey_list_dd[0])[4:6]+'/'+str(date_survey_list_dd[0])[6:8]
+        #⑤:③に値がない場合は、②で取得したデータの次の値を取得する。
+        else:
+            edit_date = date_survey_list_yyyy[date_survey_list_yyyy.index(date_survey_list_mm[-1])+1]
+            edit_date = edit_date[0:4]+'/'+ edit_date[4:6]+'/'+edit_date[6:8]
+
+
     # 開催年月日が一致するindex番号を取得
     # スプレッドシートのフォーマット状　取得したインデックスに３加算した値がセルの位置
-    cell_index_no = df.index.get_loc(current_time_str)+3
+    cell_index_no = df.index.get_loc(edit_date)+3
 
     #予想を書込む範囲を指定する。(H○:L○)で指定。
     expected_change_range = worksheet.range('H' + str(cell_index_no) + ':' + 'L' + str(cell_index_no))
@@ -90,10 +115,13 @@ def send(user_id, numbers_str):
 
 
     #編集した開催年月日を取得。YYYY/mm/dd⇨YYYY-mm-ddの形へ変換して
-    return_date = current_time_str.replace('/','-')
+    return_date = edit_date.replace('/','-')
     #編集したレース名を取得
-    edit_race_name = df.at[current_time_str,'レース名']
+    edit_race_name = df.at[edit_date,'レース名']
 
+    print(f'編集した年月日:{edit_date}')
+    print(f'編集したレース名:{edit_race_name}')
+    print(f'編集したシート名:{seat_selection}')
     # この関数が終わるとき、データが Spread Sheet の【各ユーザーのシートに予想印を】にきちんと格納されるように、作ってほしい。
 
     # SpreadSheet に格納したら、「どの日付の、どのレースの予想として格納したか」を return してください。
