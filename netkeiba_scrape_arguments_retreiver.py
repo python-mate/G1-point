@@ -91,7 +91,7 @@ def retreive(yyyymmdd):
         'year': year,
         'racetrack_code': racetrack_code,
         'times': times,
-        'date': data,
+        'date': date,
         'race_number': race_number,
     }
 
