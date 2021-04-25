@@ -15,20 +15,20 @@ import consts
 logger = utils.get_my_logger(__name__)
 
 
-def send(user_id: str, message: str):
-    """
-    TODO: まだいっかいもテストしてない。とりあえずベースだけ作成しただけの関数です。
+def send(to: str, message: str):
+    """LINE へメッセージを送信します。
+    NOTE: to には user_id, group_id, room_id を指定可能です。
     Doc: https://developers.line.biz/ja/reference/messaging-api/#send-push-message
     """
 
-    logger.debug(f'Send message to {repr(user_id)}')
+    logger.debug(f'Send message to {repr(to)}')
 
     line_bot_api = LineBotApi(consts.LINE_CHANNEL_ACCESS_TOKEN)
     line_bot_api.push_message(
-        user_id,
+        to,
         TextSendMessage(text=message),
     )
 
 
 if __name__ == '__main__':
-    send('', 'test message')
+    send(consts.LINE_G1_GROUP_ID, 'Message sent by Python.')
