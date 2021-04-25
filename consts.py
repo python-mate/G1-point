@@ -34,7 +34,9 @@ def get_env(keyname: str) -> str:
 
 LINE_CHANNEL_ACCESS_TOKEN = get_env('LINE_CHANNEL_ACCESS_TOKEN')
 LINE_CHANNEL_SECRET = get_env('LINE_CHANNEL_SECRET')
+LINE_G1_GROUP_ID = get_env('LINE_G1_GROUP_ID')
 
 if __name__ == '__main__':
     print(repr(LINE_CHANNEL_ACCESS_TOKEN))
     print(repr(LINE_CHANNEL_SECRET))
+    print(repr(LINE_G1_GROUP_ID))
