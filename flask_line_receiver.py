@@ -109,7 +109,9 @@ def on_get_message(event):
     #     - G1 group からの post である。
     #     - 処理対象メッセージである。
 
-    # TODO: G1 グループからのメッセージであることを確認。
+    if group_id != consts.LINE_G1_GROUP_ID:
+        logger.debug(f'This message is sent from unexpected group. group_id: {group_id}')
+        return
 
     if not is_target_messaage_text(message_text):
         logger.debug('This message is not a target.')
