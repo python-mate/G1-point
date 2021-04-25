@@ -118,12 +118,13 @@ def on_get_message(event):
         return
 
     # ここまで来たら、処理対象です。
-    logger.debug('This message is a target.', dict(
+    logging_dict = dict(
         group_id=group_id,
         reply_token=reply_token,
         user_id=user_id,
         message_text=message_text,
-    ))
+    )
+    logger.debug(f'This message is a target. {logging_dict}')
 
     # 発言者の情報を取得します。。
     # NOTE: ドキュメント https://github.com/line/line-bot-sdk-python#get_profileself-user_id-timeoutnone
