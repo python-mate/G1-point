@@ -133,6 +133,9 @@ def send(race_held_yyyy_mm_dd, race_result):
         if geme_race_bool == 'TRUE':
             geme_race = 3
 
+        #レース名を取得
+        race_name = df_result_writing.at[acquisition_date,'レース名']
+
         # 払戻情報を辞書化
         refund_info_dict = {'単勝':0,'馬連':0,'馬単':0,'3連複':0,'3連単':0,'合計払戻し':0}
 
@@ -190,7 +193,7 @@ def send(race_held_yyyy_mm_dd, race_result):
             cell.value = refund_info_dict[list(refund_info_dict.keys())[i]]
         worksheet_user.update_cells(range_write_refund)
 
-        print(f'{SP_SHEET}のデータを書き込み。勝負レース:{geme_race_bool}')
+        print(f'{SP_SHEET}のシート。{race_name}に書き込み。勝負レース:{geme_race_bool}')
         print(refund_info_dict)
     # この関数が終わるとき、データが Spread Sheet に【レース結果と払戻し情報】がきちんと格納されるように、作ってほしい。
 
@@ -198,16 +201,15 @@ def send(race_held_yyyy_mm_dd, race_result):
 
 
 if __name__ == '__main__':
-    send('2021-03-14', {
-        'tansho_payout': 22730,
-        'umaren_payout': 13570,
-        'umatan_payout': 62050,
-        'fuku3_payout': 34650,
-        'tan3_payout': 783010,
-        'ranking1': 5,
-        'ranking1_name': 'ギベオン',
-        'ranking2': 1,
-        'ranking2_name': 'デアリングタクト',
-        'ranking3': 10,
-        'ranking3_name': 'ポタジェ',
+    send('2021-04-18', {'tansho_payout': 370,
+    'umaren_payout': 4300,
+    'umatan_payout': 5510,
+    'fuku3_payout': 20000,
+    'tan3_payout': 82320,
+    'ranking1': 7,
+    'ranking1_name': 'エフフォーリア',
+    'ranking2': 13,
+    'ranking2_name': 'タイトルホルダー',
+    'ranking3': 3,
+    'ranking3_name': 'ステラヴェローチェ'
     })

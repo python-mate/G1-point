@@ -168,9 +168,9 @@ def __pick_payout_details(html_source: str) -> dict:
 if __name__ == '__main__':
     payout_information = scrape(
         year='2021',
-        racetrack_code='09',
-        times='02',
-        date='06',
+        racetrack_code='06',
+        times='03',
+        date='08',
         race_number='11',
     )
     logger.debug(payout_information)

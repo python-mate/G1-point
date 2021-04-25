@@ -77,10 +77,18 @@ def retreive(yyyymmdd):
         year = yyyymmdd[:4]
         racetrack_code = racecourse_code_dict[df.at[yyyymmdd,'競馬場']]
         times = df.at[yyyymmdd,'第何回']
+        if len(times) == 1:
+            times = '0' + times
         date = df.at[yyyymmdd,'何日']
+        if len(date) == 1:
+            date = '0' + date
         race_number = df.at[yyyymmdd,'何R']
+        if len(race_number) == 1:
+            race_number = '0' + race_number
+        race_name = df.at[yyyymmdd,'レース名']
+
         print(year,racetrack_code,times,date,race_number)
-        print('本日は、レースがあります。')
+        print(f'本日は、{race_name}があります。')
 
     #開催年月日がない場合は、空文字でreturnする。
     else:
@@ -97,4 +105,4 @@ def retreive(yyyymmdd):
 
 
 if __name__ == '__main__':
-    retreive('2021-03-15')
+    retreive('2021-04-18')
