@@ -15,6 +15,7 @@ pandas = "*"
 oauth2client = "*"
 python-dotenv = "*"
 mojimoji = "*"
+pytz = "*"
 
 [dev-packages]
 

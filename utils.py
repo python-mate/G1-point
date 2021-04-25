@@ -5,6 +5,10 @@ Python やるときにいつもあって欲しい自分用モジュールです�
 
 # Built-in modules.
 import logging
+import datetime
+
+# Third-party modules.
+import pytz
 
 
 def get_my_logger(logger_name: str) -> logging.Logger:
@@ -38,6 +42,16 @@ def get_my_logger(logger_name: str) -> logging.Logger:
     return logger
 
 
+def get_today_jst(_format: str) -> str:
+    """日本時間の現在時刻を取得します。
+    NOTE: format はビルトインメソッドがあるので一応 underscore をつけています。
+    """
+
+    TZ_JAPAN = pytz.timezone('Asia/Tokyo')
+    current_jst_time = datetime.datetime.now(tz=TZ_JAPAN)
+    return current_jst_time.strftime(_format)
+
+
 # utils モジュール用のロガーを作成します。
 logger = get_my_logger(__name__)
 
@@ -48,3 +62,4 @@ if __name__ == '__main__':
     logger.error('えろあ')
     logger.fatal('ふぇーたる(critical と同じっぽい)')
     logger.critical('くりてぃこぉ')
+    logger.debug(get_today_jst('%Y-%m-%d %H:%M:%S'))
