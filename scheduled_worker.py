@@ -25,6 +25,7 @@ def run():
     #       その是非を、 netkeiba_scraper_arguments_retreiver に尋ねています。
     today_yyyymmdd = utils.get_today_jst('%Y-%m-%d')
     race_information = netkeiba_scrape_arguments_retreiver.retreive(today_yyyymmdd)
+    logger.debug(f'Result of "netkeiba_scrape_arguments_retreiver": {race_information}')
 
     # レースが無い日はこれでおしまいです。おつかれさまでした。
     if not race_information:
@@ -32,15 +33,19 @@ def run():
 
     # レースがあった日のようです。レース結果を見に行きます。
     payout_information = netkeiba_scraper.scrape(race_information)
+    logger.debug(f'Result of "netkeiba_scraper": {payout_information}')
 
     # レース結果を SpreadSheet へ保存します。
     spread_sheet_result_sender.send(today_yyyymmdd, payout_information)
+    logger.debug('Result of "spread_sheet_result_sender": Done')
 
     # LINE へ送信する内容を取得します。
     message_for_line = spread_sheet_dataset_retreiver.retreive(today_yyyymmdd)
+    logger.debug(f'Result of "spread_sheet_dataset_retreiver": {message_for_line}')
 
     # LINE へメッセージを送信します。
     line_sender.send(consts.LINE_G1_GROUP_ID, message_for_line)
+    logger.debug('Result of "line_sender": Done')
 
 
 if __name__ == '__main__':
