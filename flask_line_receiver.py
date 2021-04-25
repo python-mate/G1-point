@@ -118,7 +118,7 @@ def on_get_message(event):
         return
 
     # ここまで来たら、処理対象です。
-    logger.debug(dict(
+    logger.debug('This message is a target.', dict(
         group_id=group_id,
         reply_token=reply_token,
         user_id=user_id,
