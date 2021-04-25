@@ -126,15 +126,22 @@ def send(race_held_yyyy_mm_dd, race_result):
         for expected_column in expected_columns_list:
             refundment_writing_dict[expected_column] = int(df_result_writing.at[acquisition_date,expected_column])
 
+        #勝負レースかを判定。チェックボックスの状態を見ている。
+        geme_race_bool = df_result_writing.at[acquisition_date,'勝負']
+        #通常は、1倍　勝負レースで3倍
+        geme_race = 1
+        if geme_race_bool == 'TRUE':
+            geme_race = 3
+
         # 払戻情報を辞書化
-        refund_info_dict = {'単勝':0,'馬連':0,'馬単':0,'3連複':0,'3連単':0}
+        refund_info_dict = {'単勝':0,'馬連':0,'馬単':0,'3連複':0,'3連単':0,'合計払戻し':0}
 
         #レース結果の1,2,3着リスト
         ranking123_list = [race_result['ranking1'],race_result['ranking2'],race_result['ranking3']]
 
         # 単勝結果の判定
         if race_result['ranking1'] == refundment_writing_dict['◎']:
-            refund_info_dict['単勝'] = race_result['tansho_payout'] * 10
+            refund_info_dict['単勝'] = race_result['tansho_payout'] * 10 * geme_race
 
         # 馬連結果の判定
         umaren_flag = 0
@@ -154,31 +161,36 @@ def send(race_held_yyyy_mm_dd, race_result):
             umaren_flag += 1
 
         if umaren_flag >= 11:
-            refund_info_dict['馬連'] = race_result['umaren_payout'] * 4
+            refund_info_dict['馬連'] = race_result['umaren_payout'] * 4 * geme_race
 
         # 馬単結果の判定
         if refundment_writing_dict['◎'] == race_result['ranking1']:
             if refundment_writing_dict['○'] == race_result['ranking2'] or refundment_writing_dict['▲'] == race_result['ranking2']:
-                refund_info_dict['馬単'] = race_result['umatan_payout'] * 3
+                refund_info_dict['馬単'] = race_result['umatan_payout'] * 3 * geme_race
 
         #3連複の判定
         fuku3_len = set(list(refundment_writing_dict.values())) & set(ranking123_list)
         if len(fuku3_len) == 3:
-            refund_info_dict['3連複'] = race_result['fuku3_payout'] * 2
+            refund_info_dict['3連複'] = race_result['fuku3_payout'] * 2 * geme_race
 
         #3連単の判定
         if refundment_writing_dict['◎'] in ranking123_list:
             if len(set(list(refundment_writing_dict.values())) & set(ranking123_list)) == 3:
-                refund_info_dict['3連単'] = race_result['tan3_payout'] * 1
+                refund_info_dict['3連単'] = race_result['tan3_payout'] * geme_race
 
-        #結果を書込む範囲を指定する。(G○:Q○)で指定。
-        range_write_refund = worksheet_user.range('N' + str(cell_index_no) + ':' + 'R' + str(cell_index_no))
+        #合計払戻しを計算する。
+        refund_info_dict['合計払戻し'] = refund_info_dict['単勝']+refund_info_dict['馬連']+refund_info_dict['馬単']+\
+            refund_info_dict['3連複']+ refund_info_dict['3連単']-(10000*geme_race)
+
+        #結果を書込む範囲を指定する。(G○:S○)で指定。
+        range_write_refund = worksheet_user.range('N' + str(cell_index_no) + ':' + 'S' + str(cell_index_no))
 
         #変更範囲を指定して、変更内容を書込みしスプレッドシートに反映させる。
         for i,cell in enumerate(range_write_refund):
             cell.value = refund_info_dict[list(refund_info_dict.keys())[i]]
         worksheet_user.update_cells(range_write_refund)
 
+        print(f'{SP_SHEET}のデータを書き込み。勝負レース:{geme_race_bool}')
         print(refund_info_dict)
     # この関数が終わるとき、データが Spread Sheet に【レース結果と払戻し情報】がきちんと格納されるように、作ってほしい。
 
