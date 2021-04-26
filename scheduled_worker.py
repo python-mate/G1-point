@@ -28,13 +28,15 @@ def run():
     logger.debug(f'Result of "netkeiba_scrape_arguments_retreiver": {race_information}')
 
     # レースが無い日はこれでおしまいです。おつかれさまでした。
-    if not race_information:
+    # NOTE: どうやら netkeiba_scrape_arguments_retreiver は、レースない日は {'year': '', ...}
+    #       を返すようだ。それを判断基準にします。
+    if not race_information['year']:
         logger.debug(f'Nothing to do at {today_yyyymmdd}')
+        return
 
     # レースがあった日のようです。レース結果を見に行きます。
     payout_information = netkeiba_scraper.scrape(race_information)
     logger.debug(f'Result of "netkeiba_scraper": {payout_information}')
-    return
 
     # レース結果を SpreadSheet へ保存します。
     spread_sheet_result_sender.send(today_yyyymmdd, payout_information)
