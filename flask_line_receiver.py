@@ -91,7 +91,6 @@ def on_get_message(event):
     """
 
     # event から抜くべき情報を抜きます。まずは Group id です。
-    # TODO: のちのち、 G1 グループの group id を取得して環境変数へ記録。
     group_id = event.source.group_id
 
     # 返答するための token です。
