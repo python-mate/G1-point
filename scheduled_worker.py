@@ -35,7 +35,13 @@ def run():
         return
 
     # レースがあった日のようです。レース結果を見に行きます。
-    payout_information = netkeiba_scraper.scrape(race_information)
+    payout_information = netkeiba_scraper.scrape(
+        year=race_information['year'],
+        racetrack_code=race_information['racetrack_code'],
+        times=race_information['times'],
+        date=race_information['date'],
+        race_number=race_information['race_number'],
+    )
     logger.debug(f'Result of "netkeiba_scraper": {payout_information}')
 
     # レース結果を SpreadSheet へ保存します。
