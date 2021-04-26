@@ -114,7 +114,7 @@ def on_get_message(event):
         return
 
     if not is_target_messaage_text(message_text):
-        logger.debug('This message is not a target.')
+        logger.debug(f'This message is not a target. But user id is... {user_id}')
         return
 
     # ここまで来たら、処理対象です。
