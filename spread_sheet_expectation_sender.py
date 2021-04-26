@@ -17,6 +17,11 @@ from datetime import datetime as dt
 from time import sleep
 
 #LINE_idを元にシート名の辞書を作成する。
+# ATTENTION: LINE channel が変わるたび、
+#            そして Group が変わるたび、
+#            ここの user id は変化します。
+#            そのたびにログを参照して、各々の user id を取得し、
+#            この↓ dict を更新してください。
 seat_dict = {
     'Ua91c777968e1f96a9b0a636ec366d9eb':'ササキ',
     'sample-id-2':'コバヤシ',
