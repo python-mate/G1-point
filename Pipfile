@@ -16,6 +16,7 @@ oauth2client = "*"
 python-dotenv = "*"
 mojimoji = "*"
 pytz = "*"
+gspread-dataframe = "*"
 
 [dev-packages]
 
