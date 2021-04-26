@@ -19,6 +19,7 @@ import mojimoji
 # User modules.
 import utils
 import consts
+import spread_sheet_expectation_sender
 
 # このモジュール用のロガーを作成します。
 logger = utils.get_my_logger(__name__)
@@ -148,9 +149,8 @@ def on_get_message(event):
         # そうでないエラーの場合は、フツーに打ち上げます。
         raise ex
 
-    # TODO: 対象メッセージであれば、 SpreadSheet への格納を行います。
-    race_date = '2021-04-22'
-    race_name = 'なんちゃら記念レース'
+    # 対象メッセージであれば、 SpreadSheet への格納を行います。
+    race_date, race_name = spread_sheet_expectation_sender.send(user_id, message_text)
 
     # どのレースの予想として格納されたか、発言者へ通知します。
     # NOTE: 「でないとどのレースの予想として扱われたのかわからないよね……」
