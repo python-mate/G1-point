@@ -18,11 +18,11 @@ from time import sleep
 
 #LINE_idを元にシート名の辞書を作成する。
 seat_dict = {
-    'U226ec6476abd3df33fe94a3fa9d3be56':'ササキ',
+    'Ua91c777968e1f96a9b0a636ec366d9eb':'ササキ',
     'sample-id-2':'コバヤシ',
     'sample-d-3':'ウエハラ',
     'sample-id-4':'マツノ',
-    'U2f6d493948a0bbb82018a1b4fc661636':'アカミネ',
+    'U2d60dfb30b93c289b2fb32d92a3f29fd':'アカミネ',
     'sample-id-6':'フクヤマ',
     'sample-id-7':'トヨシ',
     }
