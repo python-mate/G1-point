@@ -39,3 +39,17 @@ pipenv shell
 # (たとえば)numpy 入れたいな……っていうときはこうする。
 pipenv install numpy
 ```
+
+## .env
+
+```env
+# 実際にプログラムが動く環境で必要な env(Heroku を想定)
+LINE_CHANNEL_ACCESS_TOKEN = ''
+LINE_CHANNEL_SECRET = ''
+LINE_G1_GROUP_ID = ''
+
+# CI/CD 環境で必要な env(GitHub Actions を想定)
+HEROKU_API_KEY = ''
+HEROKU_APP_NAME = ''
+HEROKU_EMAIL = ''
+```
