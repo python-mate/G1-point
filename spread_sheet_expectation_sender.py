@@ -25,7 +25,7 @@ from time import sleep
 seat_dict = {
     'U07294e976ea424c3023889f937bbd88f':'ササキ',
     'sample-id-2':'コバヤシ',
-    'sample-d-3':'ウエハラ',
+    'U8983175d9d45162373fe3916b543d0f6':'ウエハラ',
     'Uedab1cb5b1d9797691884a37044d0567':'マツノ',
     'U2d60dfb30b93c289b2fb32d92a3f29fd':'アカミネ',
     'U66bcf58c341aae32e40591b0abd1c963':'フクヤマ',

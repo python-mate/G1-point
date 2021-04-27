@@ -18,7 +18,7 @@ from time import sleep
 seat_dict = {
     'sample-id-1':'ササキ',
     'sample-id-2':'コバヤシ',
-    'sample-d-3':'ウエハラ',
+    'sample-id-3':'ウエハラ',
     'sample-id-4':'マツノ',
     'sample-id-5':'アカミネ',
     'sample-id-6':'フクヤマ',
