@@ -28,7 +28,7 @@ seat_dict = {
     'sample-d-3':'ウエハラ',
     'sample-id-4':'マツノ',
     'U2d60dfb30b93c289b2fb32d92a3f29fd':'アカミネ',
-    'sample-id-6':'フクヤマ',
+    'U66bcf58c341aae32e40591b0abd1c963':'フクヤマ',
     'sample-id-7':'トヨシ',
     }
 
