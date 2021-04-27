@@ -29,7 +29,7 @@ seat_dict = {
     'sample-id-4':'マツノ',
     'U2d60dfb30b93c289b2fb32d92a3f29fd':'アカミネ',
     'U66bcf58c341aae32e40591b0abd1c963':'フクヤマ',
-    'sample-id-7':'トヨシ',
+    'U036190fdaed7c8747f930a98534c04b4':'トヨシ',
     }
 
 #現在日時を取得して文字型のYYYY/mm/ddの形へ変更する。
