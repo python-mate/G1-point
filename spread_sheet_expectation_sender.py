@@ -23,7 +23,7 @@ from time import sleep
 #            そのたびにログを参照して、各々の user id を取得し、
 #            この↓ dict を更新してください。
 seat_dict = {
-    'Ua91c777968e1f96a9b0a636ec366d9eb':'ササキ',
+    'U07294e976ea424c3023889f937bbd88f':'ササキ',
     'sample-id-2':'コバヤシ',
     'sample-d-3':'ウエハラ',
     'sample-id-4':'マツノ',
