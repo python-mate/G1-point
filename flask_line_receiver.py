@@ -84,7 +84,19 @@ def callback_post():
 #       ってイメージで多分 OK.
 @handler.add(MessageEvent, message=TextMessage)
 def on_get_message(event):
-    """ここで行うことは……
+    try:
+        on_get_message_main(event)
+    except Exception as ex:
+        # NOTE: str(ex) によりメッセージが出力されます。
+        utils.send_slack_message(
+            f'Error raised in flask_line_receiver: {ex}\n'
+            'Check the detail log: `heroku logs --num 1500 --app denuma-program --ps web`'
+        )
+
+
+def on_get_message_main(event):
+    """on_get_message のメイン処理です。コレ自体を try でかこうため、分離
+    ここで行うことは……
     - G1 グループからのメッセージであることを確認。(event.source.group_id で検証可能。)
     - 発言者名を取得。(line_bot_api.get_profile で確認可能。)
     - メッセージの内容を取得し、「予想」メッセージであれば Spread Sheet へ格納。
