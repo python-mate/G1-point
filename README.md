@@ -47,6 +47,8 @@ pipenv install numpy
 LINE_CHANNEL_ACCESS_TOKEN = ''
 LINE_CHANNEL_SECRET = ''
 LINE_G1_GROUP_ID = ''
+SLACK_CHANNEL_NAME = ''
+SLACK_BOT_TOKEN = ''
 
 # CI/CD 環境で必要な env(GitHub Actions を想定)
 HEROKU_API_KEY = ''

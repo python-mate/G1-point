@@ -35,8 +35,12 @@ def get_env(keyname: str) -> str:
 LINE_CHANNEL_ACCESS_TOKEN = get_env('LINE_CHANNEL_ACCESS_TOKEN')
 LINE_CHANNEL_SECRET = get_env('LINE_CHANNEL_SECRET')
 LINE_G1_GROUP_ID = get_env('LINE_G1_GROUP_ID')
+SLACK_CHANNEL_NAME = get_env('SLACK_CHANNEL_NAME')
+SLACK_BOT_TOKEN = get_env('SLACK_BOT_TOKEN')
 
 if __name__ == '__main__':
     print(repr(LINE_CHANNEL_ACCESS_TOKEN))
     print(repr(LINE_CHANNEL_SECRET))
     print(repr(LINE_G1_GROUP_ID))
+    print(repr(SLACK_CHANNEL_NAME))
+    print(repr(SLACK_BOT_TOKEN))
