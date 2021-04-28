@@ -58,4 +58,11 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    try:
+        run()
+    except Exception as ex:
+        # NOTE: str(ex) によりメッセージが出力されます。
+        utils.send_slack_message(
+            f'Error raised in scheduled_worker: {ex}\n'
+            'Check the detail log: `heroku logs --num 1500 --app denuma-program --ps scheduler`'
+        )
