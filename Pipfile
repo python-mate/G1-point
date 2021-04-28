@@ -17,6 +17,7 @@ python-dotenv = "*"
 mojimoji = "*"
 pytz = "*"
 gspread-dataframe = "*"
+slack-sdk = "*"
 
 [dev-packages]
 

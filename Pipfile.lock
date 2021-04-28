@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1e948cd11b40763855fbca753be5226239cf67bd8cc35899bb6c8d4c80e98019"
+            "sha256": "d4fdba4f3def225c99d3f2cb3c9bc955a0308317977f8c06fd72e7870b62122b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -27,11 +27,11 @@
         },
         "cachetools": {
             "hashes": [
-                "sha256:1d9d5f567be80f7c07d765e21b814326d78c61eb0c3a637dffc0e5d1796cb2e2",
-                "sha256:f469e29e7aa4cff64d8de4aad95ce76de8ea1125a16c68e0d93f65c3c3dc92e9"
+                "sha256:2cc0b89715337ab6dbba85b5b50effe2b0c74e035d83ee8ed637cf52f12ae001",
+                "sha256:61b5ed1e22a0924aed1d23b478f37e8d52549ff8a961de2909c69bf950020cff"
             ],
             "markers": "python_version ~= '3.5'",
-            "version": "==4.2.1"
+            "version": "==4.2.2"
         },
         "certifi": {
             "hashes": [
@@ -73,18 +73,18 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:010f011c4e27d3d5eb01106fba6aac39d164842dfcd8709955c4638f5b11ccf8",
-                "sha256:f30a672a64d91cc2e3137765d088c5deec26416246f7a9e956eaf69a8d7ed49c"
+                "sha256:588bdb03a41ecb4978472b847881e5518b5d9ec6153d3d679aa127a55e13b39f",
+                "sha256:9ad25fba07f46a628ad4d0ca09f38dcb262830df2ac95b217f9b0129c9e42206"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==1.29.0"
+            "version": "==1.30.0"
         },
         "google-auth-oauthlib": {
             "hashes": [
                 "sha256:09832c6e75032f93818edf1affe4746121d640c625a5bef9b5c96af676e98eee",
                 "sha256:0e92aacacfb94978de3b7972cf4b0f204c3cd206f74ddd0dc0b31e91164e6317"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_full_version >= '3.6.0'",
             "version": "==0.4.4"
         },
         "gspread": {
@@ -105,6 +105,7 @@
         },
         "gunicorn": {
             "hashes": [
+                "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e",
                 "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"
             ],
             "index": "pypi",
@@ -425,7 +426,7 @@
                 "sha256:78f9a9bf4e7be0c5ded4583326e7461e3a3c5aae24073648b4bdfa797d78c9d2",
                 "sha256:9d689e6ca1b3038bc82bf8d23e944b6b6037bc02301a574935b2dd946e0353b9"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_full_version >= '3.6.0'",
             "version": "==4.7.2"
         },
         "six": {
@@ -435,6 +436,14 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.15.0"
+        },
+        "slack-sdk": {
+            "hashes": [
+                "sha256:66db2e834e397af4ccb0da9f7ab8aeb6f65a81308e32a6f59e7eafef23f4dbeb",
+                "sha256:b1748fe130f46d9a8595b9260bc9deb25727a272043b1a8240a935e3c759ac38"
+            ],
+            "index": "pypi",
+            "version": "==3.5.0"
         },
         "soupsieve": {
             "hashes": [
