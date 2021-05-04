@@ -30,6 +30,7 @@ scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/aut
 
 #認証情報設定
 #ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
+# TODO: json は環境変数化
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
     'g1-point-7e93bd98712c.json',
     scope
