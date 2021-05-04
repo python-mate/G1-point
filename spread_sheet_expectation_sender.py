@@ -16,6 +16,9 @@ from gspread_dataframe import set_with_dataframe
 from datetime import datetime as dt
 from time import sleep
 
+# User modules.
+import consts
+
 #LINE_idを元にシート名の辞書を作成する。
 # ATTENTION: LINE channel が変わるたび、
 #            そして Group が変わるたび、
@@ -51,12 +54,13 @@ def send(user_id, numbers_str):
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
     #認証情報設定
-    #ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
-    # TODO: json は環境変数化
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        'g1-point-7e93bd98712c.json',
-        scope
-        )
+    # NOTE: もともとは from_json_keyfile_name で json ファイルから credentials を作っていました。
+    #       しかし秘密鍵である json ファイルを repository に含めると、 GitHub で公開できません!
+    #       なので from_json_keyfile_dict に変更して、 json ファイルがなくても動くようにしました。
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+        consts.GSPREAD_CREDENTIAL_JSON,
+        scope,
+    )
 
     #OAuth2の資格情報を使用してGoogle APIにログインします。
     gc = gspread.authorize(credentials)
@@ -135,4 +139,4 @@ def send(user_id, numbers_str):
 
 
 if __name__ == '__main__':
-    send('sample-id-4', '10.5.13.12.1')
+    send('U2d60dfb30b93c289b2fb32d92a3f29fd', '10.5.13.12.1')
