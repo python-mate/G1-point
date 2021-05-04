@@ -15,6 +15,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 from gspread_dataframe import set_with_dataframe
 from time import sleep
 
+# User modules.
+import consts
+
 seat_dict = {
     'sample-id-1':'ササキ',
     'sample-id-2':'コバヤシ',
@@ -29,11 +32,13 @@ seat_dict = {
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
 #認証情報設定
-#ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    'g1-point-7e93bd98712c.json',
-    scope
-    )
+# NOTE: もともとは from_json_keyfile_name で json ファイルから credentials を作っていました。
+#       しかし秘密鍵である json ファイルを repository に含めると、 GitHub で公開できません!
+#       なので from_json_keyfile_dict に変更して、 json ファイルがなくても動くようにしました。
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+    consts.GSPREAD_CREDENTIAL_JSON,
+    scope,
+)
 
 #OAuth2の資格情報を使用してGoogle APIにログインします。
 gc = gspread.authorize(credentials)
@@ -122,4 +127,4 @@ def retreive(race_held_yyyy_mm_dd):
 
 
 if __name__ == '__main__':
-    retreive('2021-03-14')
+    print(retreive('2021-05-02'))
