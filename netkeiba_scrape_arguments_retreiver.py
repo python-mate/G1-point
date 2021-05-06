@@ -17,6 +17,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread_dataframe import set_with_dataframe
 
+# User modules.
+import consts
+
 #競馬場別で振分けされているコードの辞書を作成。
 racecourse_code_dict = {
     '札幌':'01',
@@ -35,11 +38,13 @@ racecourse_code_dict = {
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
 #認証情報設定
-#ダウンロードしたjsonファイル名をクレデンシャル変数に設定（秘密鍵、Pythonファイルから読み込みしやすい位置に置く）
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    'g1-point-7e93bd98712c.json',
-    scope
-    )
+# NOTE: もともとは from_json_keyfile_name で json ファイルから credentials を作っていました。
+#       しかし秘密鍵である json ファイルを repository に含めると、 GitHub で公開できません!
+#       なので from_json_keyfile_dict に変更して、 json ファイルがなくても動くようにしました。
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+    consts.GSPREAD_CREDENTIAL_JSON,
+    scope,
+)
 
 #OAuth2の資格情報を使用してGoogle APIにログインします。
 gc = gspread.authorize(credentials)
