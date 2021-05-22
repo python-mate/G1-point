@@ -87,6 +87,15 @@ def on_get_message(event):
     try:
         on_get_message_main(event)
     except Exception as ex:
+
+        # サーバ側にもログは出ていてほしいので、出します。
+        # NOTE: Slack へメッセージを送ったあとに raise ex するほうがキレイに見えます。
+        #       しかし、 Slack でエラーが発生したとき怖い(何も解らなくなる)ので、
+        #       ここで print_exc することにしました。
+        import traceback
+        logger.error('Error raised in flask_line_receiver, print_exc below.')
+        traceback.print_exc()
+
         # NOTE: str(ex) によりメッセージが出力されます。
         utils.send_slack_message(
             f'Error raised in flask_line_receiver: {ex}\n'
