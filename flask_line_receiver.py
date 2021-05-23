@@ -104,6 +104,13 @@ def on_get_message(event):
             'Check the detail log: `heroku logs --num 1500 --app denuma-program --ps web`'
         )
 
+    # NOTE: 新しい機能でエラーが発生しても、もとの機能に影響を及ぼさないように、
+    #       「もとの機能のあとに」新しい関数を呼んでいます。
+    try:
+        on_get_message_sub(event)
+    except Exception as ex:
+        raise ex
+
 
 def on_get_message_main(event):
     """on_get_message のメイン処理です。コレ自体を try でかこうため、分離
@@ -181,10 +188,7 @@ def on_get_message_main(event):
     reply_or_push_message(reply_token, group_id, send_message)
 
 
-# NOTE: @handler.add した関数は、handler.handle 関数によって呼び出される、
-#       ってイメージで多分 OK.
-@handler.add(MessageEvent, message=TextMessage)
-def on_get_message2(event):
+def on_get_message_sub(event):
     # ここに書いていくと、グループからメッセージが送られたときに
     # 呼び出されます。
     # こちら↓に、この関数内で使える変数を列挙しますので、それを使って仕上げてください。
