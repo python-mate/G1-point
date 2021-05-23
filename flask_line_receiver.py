@@ -194,6 +194,9 @@ def on_get_message_sub(event):
     # こちら↓に、この関数内で使える変数を列挙しますので、それを使って仕上げてください。
     # たぶんこの関数の中でエラーが出ても、すでに動いている「予想登録機能」には影響ないと思います。
     # ガンガンテストしちゃってください。
+    # Heroku にアップしてテストした場合は
+    #     heroku logs --num 500 --tail --app denuma-program
+    # このコマンドで、 print の内容が出ます。
 
     group_id = event.source.group_id
     reply_token = event.reply_token
