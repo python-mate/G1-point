@@ -104,7 +104,7 @@ def retreive(race_held_yyyy_mm_dd):
     if len(print_name_list) > 0:
         print_name = '\n'.join(print_name_list)
     else:
-        print_name_list.append('今回的中者はいません!!\n次回のレースは頑張りましょう!!')
+        print_name = ('今回的中者はいません!!\n\n競馬何年やってますのん!?\nひとりぐらい当たらんけぇ〜・・・')
 
     # 開催年月日が一致するindex番号を取得
     # 次回のレース日程とレース名を取得
@@ -127,4 +127,4 @@ def retreive(race_held_yyyy_mm_dd):
 
 
 if __name__ == '__main__':
-    print(retreive('2021-05-02'))
+    print(retreive('2021-05-23'))

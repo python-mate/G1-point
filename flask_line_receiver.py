@@ -23,6 +23,7 @@ import mojimoji
 import utils
 import consts
 import spread_sheet_expectation_sender
+import spread_sheet_hot_race_sender
 
 # このモジュール用のロガーを作成します。
 logger = utils.get_my_logger(__name__)
@@ -189,6 +190,12 @@ def on_get_message_main(event):
 
 
 def on_get_message_sub(event):
+    """
+    この関数は、LINEのメーセージが'勝負'のみの内容だった時のみ動き出します。
+    -'勝負'メッセージが届くと spread_sheet_hot_race_sender.py に user_id を引数に渡します。
+    -処理が終わると空リターン
+    """
+
     # ここに書いていくと、グループからメッセージが送られたときに
     # 呼び出されます。
     # こちら↓に、この関数内で使える変数を列挙しますので、それを使って仕上げてください。
