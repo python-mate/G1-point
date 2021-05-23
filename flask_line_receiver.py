@@ -181,6 +181,30 @@ def on_get_message_main(event):
     reply_or_push_message(reply_token, group_id, send_message)
 
 
+# NOTE: @handler.add した関数は、handler.handle 関数によって呼び出される、
+#       ってイメージで多分 OK.
+@handler.add(MessageEvent, message=TextMessage)
+def on_get_message2(event):
+    # ここに書いていくと、グループからメッセージが送られたときに
+    # 呼び出されます。
+    # こちら↓に、この関数内で使える変数を列挙しますので、それを使って仕上げてください。
+    # たぶんこの関数の中でエラーが出ても、すでに動いている「予想登録機能」には影響ないと思います。
+    # ガンガンテストしちゃってください。
+
+    group_id = event.source.group_id
+    reply_token = event.reply_token
+    user_id = event.source.user_id
+    message_text = mojimoji.zen_to_han(event.message.text).replace(' ', '')
+    print(dict(
+        group_id=group_id,
+        reply_token=reply_token,
+        user_id=user_id,
+        message_text=message_text,
+    ))
+    # 試しにむりやりエラーを起こして、元機能に影響がないことを確認します。
+    raise Exception('むりやり起こしたエラーだよー。')
+
+
 def is_target_messaage_text(inspection_target: str) -> bool:
     """処理対象メッセージであれば True を返します。
     [int].[int].[int].[int].[int] の形式を、対象メッセージと判断しています。
