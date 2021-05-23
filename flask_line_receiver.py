@@ -3,6 +3,9 @@
 LINE とのやりとりを行うスクリプトです。
 """
 
+# Built-in modules.
+import traceback
+
 # Third-party modules.
 from flask import Flask, request, abort
 from linebot import (
@@ -92,7 +95,6 @@ def on_get_message(event):
         # NOTE: Slack へメッセージを送ったあとに raise ex するほうがキレイに見えます。
         #       しかし、 Slack でエラーが発生したとき怖い(何も解らなくなる)ので、
         #       ここで print_exc することにしました。
-        import traceback
         logger.error('Error raised in flask_line_receiver, print_exc below.')
         traceback.print_exc()
 
@@ -160,10 +162,7 @@ def on_get_message_main(event):
                 'ゴメンなさい! 今回のメッセージは受理されませんでした!\n'
                 '私をご利用になるためには、私を友達登録してください!'
             )
-            line_bot_api.reply_message(
-                reply_token,
-                TextSendMessage(text=send_message),
-            )
+            reply_or_push_message(reply_token, group_id, send_message)
             return
 
         # そうでないエラーの場合は、フツーに打ち上げます。
@@ -179,10 +178,7 @@ def on_get_message_main(event):
         f'{user_profile.display_name} さん\n'
         f'今回のメッセージ "{message_text}" は {race_date} {race_name} の予想として受理されました!'
     )
-    line_bot_api.reply_message(
-        reply_token,
-        TextSendMessage(text=send_message),
-    )
+    reply_or_push_message(reply_token, group_id, send_message)
 
 
 def is_target_messaage_text(inspection_target: str) -> bool:
@@ -210,6 +206,44 @@ def is_int(string: str) -> bool:
         return False
     else:
         return float(string).is_integer()
+
+
+def reply_or_push_message(reply_token: str, to: str, send_message: str):
+    """reply_message を試し、ダメなら push_message を試します。
+    NOTE: reply_message で "Invalid reply token" が発生したので追加した関数です。
+          発生原因はおそらくこれ。
+          > 応答トークンは一定の期間が経過すると無効になるため、メッセージを受信したらすぐに応答を返す必要があります。
+          > https://developers.line.biz/ja/reference/messaging-api/#send-reply-message
+          しかし現在の無料 Heroku 運用では仕方ない……絶対発生しうるエラーです。
+          なので、 push_message でフォローを行うことにした、という流れです。
+    NOTE: 最初から push_message で良いような気もしますが、
+          処理の流れとしては reply_message が正道だと考えます。
+          (Heroku が常時起動していれば気にする必要のないもの)
+          なので reply_message を排除することはしていません。
+    """
+
+    try:
+        # とりあえず reply_message を試みます。
+        line_bot_api.reply_message(
+            reply_token,
+            TextSendMessage(text=send_message),
+        )
+    except LineBotApiError:
+
+        # 一応ロギングはしておきます。
+        logger.error(
+            'Error raised when reply_message, will try push_message.'
+            ' But print_exc below anyways.'
+        )
+        traceback.print_exc()
+
+        # reply に失敗したら、 reply_token 指定ではなく group_id 指定……
+        # (一応 user_id でも可能なので to という変数名にしています)
+        # ……でのメッセージ送信を試みます。
+        line_bot_api.push_message(
+            to,
+            TextSendMessage(text=send_message),
+        )
 
 
 if __name__ == '__main__':
