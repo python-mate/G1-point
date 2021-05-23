@@ -4,6 +4,9 @@
 いろいろな user 作成モジュールをコールする上位スクリプトという位置づけです。
 """
 
+# Built-in modules.
+import traceback
+
 # User modules.
 import utils
 import consts
@@ -61,6 +64,13 @@ if __name__ == '__main__':
     try:
         run()
     except Exception as ex:
+        # サーバ側にもログは出ていてほしいので、出します。
+        # NOTE: Slack へメッセージを送ったあとに raise ex するほうがキレイに見えます。
+        #       しかし、 Slack でエラーが発生したとき怖い(何も解らなくなる)ので、
+        #       ここで print_exc することにしました。
+        logger.error('Error raised in scheduled_worker, print_exc below.')
+        traceback.print_exc()
+
         # NOTE: str(ex) によりメッセージが出力されます。
         utils.send_slack_message(
             f'Error raised in scheduled_worker: {ex}\n'
