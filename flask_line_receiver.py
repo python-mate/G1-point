@@ -215,8 +215,30 @@ def on_get_message_sub(event):
         user_id=user_id,
         message_text=message_text,
     ))
+
+    #メッセージ内容が'勝負'なら処理を実行してメッセージを返す。
+    if message_text == '勝負':
+        return_data = spread_sheet_hot_race_sender.send_game(user_id)
+        print(return_data)
+
+        if return_data[is_game] == '勝負':
+            send_message = (
+            f'{user_profile.display_name} さん\n'
+            f'{return_data[date]} {return_data[race_name]}は{return_data[is_game]}レースとして受理されました!'
+            )
+        else:
+            send_message = (
+            f'{user_profile.display_name} さん\n'
+            f'{return_data[date]} {return_data[race_name]}の勝負レースは、\n'
+            f'{return_data[is_game]}されました。'
+            )
+
+        reply_or_push_message(reply_token, group_id, send_message)
+
+    else:
+        return
     # 試しにむりやりエラーを起こして、元機能に影響がないことを確認します。
-    raise Exception('むりやり起こしたエラーだよー。')
+    # raise Exception('むりやり起こしたエラーだよー。')
 
 
 def is_target_messaage_text(inspection_target: str) -> bool:

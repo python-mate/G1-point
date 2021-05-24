@@ -5,7 +5,7 @@
 python spread_sheet_hot_race_sender.py
 
 したとき、user_id に紐づいた　〇〇さんの「勝負レース」として
-Spread Sheet にきちんと格納されるように、関数 send_geme を作くろう!
+Spread Sheet にきちんと格納されるように、関数 send_game を作くろう!
 """
 
 #必要モジュールの準備
@@ -64,11 +64,17 @@ gc = gspread.authorize(credentials)
 SPREADSHEET_KEY = '1pCTN9momqKlH4UtTRTf11yqXW2nI3grXUzRpbu6M6Tw'#スプレッドシートのd/〜〜/までをコピー。
 SP_SHEET = ''#ワークシート名 とりあえず空を定義
 
-def send_geme(user_id:str):
+def send_game(user_id:str) -> dict:
     """
     この関数が呼び出されると、user_idに紐づいたワークシートの
     '勝負'のカラムにTUREを入れる（チェックのこと）
-    編集したシート名をリターンする。
+    returnは、辞書型で返す。
+    return_dict = dict(
+        date = return_date,(日付)
+        raec_name = edit_race_name,(レース名)
+        sheet_name = SP_SHEET,(ワークシート)
+        is_game = is_game_or_cancel(勝負かキャンセルか)
+    )
     """
     #ワークシート名を指定
     SP_SHEET = seat_dict[user_id]
@@ -121,10 +127,10 @@ def send_geme(user_id:str):
     if sell_bool_type == 'FALSE':
         #セルを指定して書込む
         worksheet.update_acell(f'M{cell_index_no}','TRUE')
-        is_geme_or_cancel = '勝負'
+        is_game_or_cancel = '勝負'
     else:
         worksheet.update_acell(f'M{cell_index_no}','FALSE')
-        is_geme_or_cancel = 'キャンセル'
+        is_game_or_cancel = 'キャンセル'
 
 
     #編集した開催年月日を取得。YYYY/mm/dd⇨YYYY-mm-ddの形へ変換して
@@ -132,15 +138,23 @@ def send_geme(user_id:str):
     #編集したレース名を取得
     edit_race_name = df.at[edit_date,'レース名']
 
-    print(f'勝負レースとした年月日:{edit_date}')
-    print(f'勝負としてレース名:{edit_race_name}')
-    print(f'勝負レースとしたシート名:{SP_SHEET}')
-    print(f'勝負かキャンセルか:{is_geme_or_cancel}')
+    print(f'勝負レース処理した年月日:{edit_date}')
+    print(f'勝負レース処理したレース名:{edit_race_name}')
+    print(f'勝負レース処理したシート名:{SP_SHEET}')
+    print(f'勝負かキャンセルか:{is_game_or_cancel}')
 
-    # SpreadSheet に格納したら、「どの日付の、どのレースを勝負としたのか」を return してください。
-    return return_date , edit_race_name
+    #returnするデータを辞書化する。
+    return_dict = dict(
+        date = return_date,
+        raec_name = edit_race_name,
+        sheet_name = SP_SHEET,
+        is_game = is_game_or_cancel
+    )
+
+    # SpreadSheet に格納したら、「どの日付の、どのレースを 勝負orキャンセルしたのか」を return
+    return return_dict
 
 
 
 if __name__ == '__main__':
-    print(send_geme('U2d60dfb30b93c289b2fb32d92a3f29fd'))
+    print(send_game('U2d60dfb30b93c289b2fb32d92a3f29fd'))
