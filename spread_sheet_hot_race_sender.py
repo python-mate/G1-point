@@ -146,7 +146,7 @@ def send_game(user_id:str) -> dict:
     #returnするデータを辞書化する。
     return_dict = dict(
         date = return_date,
-        raec_name = edit_race_name,
+        race_name = edit_race_name,
         sheet_name = SP_SHEET,
         is_game = is_game_or_cancel
     )
