@@ -239,9 +239,9 @@ def on_get_message_sub(event):
 
         if return_data["is_game"] == '勝負':
             send_message = (
-            f'{user_profile.display_name} さん\n'
-            f'{return_data["date"]} {return_data["race_name"]}は\n'
-            f'🔥{return_data["is_game"]}レース🔥として受理されました!!'
+            f'{user_profile.display_name} さんが\n'
+            f'{return_data["date"]} {return_data["race_name"]}を\n'
+            f'🔥{return_data["is_game"]}レース🔥に指定しました!!'
             )
         else:
             send_message = (
