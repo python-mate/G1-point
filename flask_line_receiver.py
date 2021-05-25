@@ -205,6 +205,23 @@ def on_get_message_sub(event):
     #     heroku logs --num 500 --tail --app denuma-program
     # このコマンドで、 print の内容が出ます。
 
+    # 発言者の情報を取得します。。
+    # NOTE: ドキュメント https://github.com/line/line-bot-sdk-python#get_profileself-user_id-timeoutnone
+    try:
+        user_profile = line_bot_api.get_profile(user_id)
+    except LineBotApiError as ex:
+        # NOTE: 発言者が Messaging API channel と友達でない場合は 404 エラーが発生します。
+        #       その場合は友達登録を促します。
+        if ex.status_code == 404:
+            send_message = (
+                'xxx さん\n'
+                'ゴメンなさい! 今回のメッセージは受理されませんでした!\n'
+                '私をご利用になるためには、私を友達登録してください!'
+            )
+            reply_or_push_message(reply_token, group_id, send_message)
+            return
+
+
     group_id = event.source.group_id
     reply_token = event.reply_token
     user_id = event.source.user_id
