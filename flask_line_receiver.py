@@ -205,7 +205,18 @@ def on_get_message_sub(event):
     #     heroku logs --num 500 --tail --app denuma-program
     # このコマンドで、 print の内容が出ます。
 
-    # 発言者の情報を取得します。。
+    group_id = event.source.group_id
+    reply_token = event.reply_token
+    user_id = event.source.user_id
+    message_text = mojimoji.zen_to_han(event.message.text).replace(' ', '')
+    print(dict(
+        group_id=group_id,
+        reply_token=reply_token,
+        user_id=user_id,
+        message_text=message_text,
+    ))
+
+    # 発言者の情報を取得します。（パクる）
     # NOTE: ドキュメント https://github.com/line/line-bot-sdk-python#get_profileself-user_id-timeoutnone
     try:
         user_profile = line_bot_api.get_profile(user_id)
@@ -220,18 +231,6 @@ def on_get_message_sub(event):
             )
             reply_or_push_message(reply_token, group_id, send_message)
             return
-
-
-    group_id = event.source.group_id
-    reply_token = event.reply_token
-    user_id = event.source.user_id
-    message_text = mojimoji.zen_to_han(event.message.text).replace(' ', '')
-    print(dict(
-        group_id=group_id,
-        reply_token=reply_token,
-        user_id=user_id,
-        message_text=message_text,
-    ))
 
     #メッセージ内容が'勝負'なら処理を実行してメッセージを返す。
     if message_text == '勝負':
