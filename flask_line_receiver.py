@@ -232,32 +232,29 @@ def on_get_message_sub(event):
             reply_or_push_message(reply_token, group_id, send_message)
             return
 
-    #メッセージ内容が'勝負'なら処理を実行してメッセージを返す。
-    if message_text == '勝負':
-        return_data = spread_sheet_hot_race_sender.send_game(user_id)
-        print(return_data)
-
-        #is_gameが Trueであるならば、勝負レースとしてメッセージを作成する。
-        if return_data["is_game"]:
-            send_message = (
-            f'{user_profile.display_name} さんが\n'
-            f'{return_data["date"]} {return_data["race_name"]}を\n'
-            '🔥勝負レース🔥に指定しました!!'
-            )
-        else:
-            send_message = (
-            f'{user_profile.display_name} さん\n'
-            f'{return_data["date"]} {return_data["race_name"]}の\n'
-            '勝負レースをキャンセルしました。'
-            )
-
-        reply_or_push_message(reply_token, group_id, send_message)
-
-    else:
+    #メッセージ内容が'勝負'でなければ、この関数はを終了する。
+    if message_text != '勝負':
         return
-    # 試しにむりやりエラーを起こして、元機能に影響がないことを確認します。
-    # raise Exception('むりやり起こしたエラーだよー。')
 
+    #メッセージ内容が'勝負'なら処理を実行してメッセージを返す。
+    return_data = spread_sheet_hot_race_sender.send_game(user_id)
+    print(return_data)
+
+    #is_gameが Trueであるならば、勝負レースとしてメッセージを作成する。
+    if return_data["is_game"]:
+        send_message = (
+        f'{user_profile.display_name} さんが\n'
+        f'{return_data["date"]} {return_data["race_name"]}を\n'
+        '🔥勝負レース🔥に指定しました!!'
+        )
+    else:
+        send_message = (
+        f'{user_profile.display_name} さん\n'
+        f'{return_data["date"]} {return_data["race_name"]}の\n'
+        '勝負レースをキャンセルしました。'
+        )
+
+    reply_or_push_message(reply_token, group_id, send_message)
 
 def is_target_messaage_text(inspection_target: str) -> bool:
     """処理対象メッセージであれば True を返します。
@@ -326,3 +323,4 @@ def reply_or_push_message(reply_token: str, to: str, send_message: str):
 
 if __name__ == '__main__':
     app.run()
+
