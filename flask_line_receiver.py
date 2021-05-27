@@ -237,17 +237,18 @@ def on_get_message_sub(event):
         return_data = spread_sheet_hot_race_sender.send_game(user_id)
         print(return_data)
 
-        if return_data["is_game"] == '勝負':
+        #is_gameが Trueであるならば、勝負レースとしてメッセージを作成する。
+        if return_data["is_game"]:
             send_message = (
             f'{user_profile.display_name} さんが\n'
             f'{return_data["date"]} {return_data["race_name"]}を\n'
-            f'🔥{return_data["is_game"]}レース🔥に指定しました!!'
+            '🔥勝負レース🔥に指定しました!!'
             )
         else:
             send_message = (
             f'{user_profile.display_name} さん\n'
             f'{return_data["date"]} {return_data["race_name"]}の\n'
-            f'勝負レースを{return_data["is_game"]}しました。'
+            '勝負レースをキャンセルしました。'
             )
 
         reply_or_push_message(reply_token, group_id, send_message)

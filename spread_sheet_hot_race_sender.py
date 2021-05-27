@@ -42,7 +42,7 @@ def send_game(user_id:str) -> dict:
         date = return_date,(日付)
         raec_name = edit_race_name,(レース名)
         sheet_name = SP_SHEET,(ワークシート)
-        is_game = is_game_or_cancel(勝負かキャンセルか)
+        is_game = is_game(True->勝負 Flese->キャンセル)
     )
     """
 
@@ -101,14 +101,16 @@ def send_game(user_id:str) -> dict:
     #セルを取得して勝負カラムのチェック状態を調べる。
     cell_bool_type = SP_WORKSHEET.acell(f'M{cell_index_no}').value
 
-    #FALSE=勝負にチェック　TRUE=勝負のチェックを外す
-    if cell_bool_type == 'FALSE':
+    #セルの状態がFALSEであれば、True を返してもらう。
+    is_game = cell_bool_type == 'FALSE'
+
+    #FALSE=勝負にチェック　TRUE=勝負のチェックを外す。
+    if is_game:
         #セルを指定して書込む
         SP_WORKSHEET.update_acell(f'M{cell_index_no}','TRUE')
-        is_game_or_cancel = '勝負'
     else:
         SP_WORKSHEET.update_acell(f'M{cell_index_no}','FALSE')
-        is_game_or_cancel = 'キャンセル'
+
 
     #編集した開催年月日を取得。YYYY/mm/dd⇨YYYY-mm-ddの形へ変換して
     return_date = edit_date.replace('/','-')
@@ -118,14 +120,14 @@ def send_game(user_id:str) -> dict:
     print(f'勝負レース処理した年月日:{edit_date}')
     print(f'勝負レース処理したレース名:{edit_race_name}')
     print(f'勝負レース処理したシート名:{SP_SHEET}')
-    print(f'勝負かキャンセルか:{is_game_or_cancel}')
+    print(f'勝負かキャンセルか:{is_game}')
 
     #returnするデータを辞書化する。
     return_dict = dict(
         date = return_date,
         race_name = edit_race_name,
         sheet_name = SP_SHEET,
-        is_game = is_game_or_cancel
+        is_game = is_game
     )
 
     # SpreadSheet に格納したら、「どの日付の、どのレースを 勝負orキャンセルしたのか」を return
