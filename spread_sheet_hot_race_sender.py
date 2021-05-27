@@ -20,49 +20,18 @@ from time import sleep
 # User modules.
 import consts
 
-#現在日時を取得して文字型のYYYY/mm/ddの形へ変更する。
-current_time = dt.now()
-current_time_str = current_time.strftime('%Y/%m/%d')
-#＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
-#テスト的に日付を強制合わせする。
-# current_time_str = '2021/04/17'
-#＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
-
-#LINE_idを元にシート名の辞書を作成する。
-# ATTENTION: LINE channel が変わるたび、
-#            そして Group が変わるたび、
-#            ここの user id は変化します。
-#            そのたびにログを参照して、各々の user id を取得し、
-#            この↓ dict を更新してください。
-seat_dict = {
-    'U07294e976ea424c3023889f937bbd88f':'ササキ',
-    'U97030df889f29fe5fa83fae98957a04d':'コバヤシ',
-    'U8983175d9d45162373fe3916b543d0f6':'ウエハラ',
-    'Uedab1cb5b1d9797691884a37044d0567':'マツノ',
-    'U2d60dfb30b93c289b2fb32d92a3f29fd':'アカミネ',
-    'U66bcf58c341aae32e40591b0abd1c963':'フクヤマ',
-    'U036190fdaed7c8747f930a98534c04b4':'トヨシ',
-    }
-
 #⭐️スプレッドシートを扱う絶対必要なもの⭐️
-#2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならない
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-
 #認証情報設定
 # NOTE: もともとは from_json_keyfile_name で json ファイルから credentials を作っていました。
 #       しかし秘密鍵である json ファイルを repository に含めると、 GitHub で公開できません!
 #       なので from_json_keyfile_dict に変更して、 json ファイルがなくても動くようにしました。
-credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+GSPREAD_CREDENTIAL = ServiceAccountCredentials.from_json_keyfile_dict(
     consts.GSPREAD_CREDENTIAL_JSON,
-    scope,
+    consts.GSPREAD_SCOPE,
 )
 
 #OAuth2の資格情報を使用してGoogle APIにログインします。
-gc = gspread.authorize(credentials)
-
-#共有設定したスプレッドシートキーを変数[SPREADSHEET_KEY]に格納する。
-SPREADSHEET_KEY = '1pCTN9momqKlH4UtTRTf11yqXW2nI3grXUzRpbu6M6Tw'#スプレッドシートのd/〜〜/までをコピー。
-SP_SHEET = ''#ワークシート名 とりあえず空を定義
+GSPREAD_GC = gspread.authorize(GSPREAD_CREDENTIAL)
 
 def send_game(user_id:str) -> dict:
     """
@@ -76,17 +45,24 @@ def send_game(user_id:str) -> dict:
         is_game = is_game_or_cancel(勝負かキャンセルか)
     )
     """
+
+    #現在日時を取得して文字型のYYYY/mm/ddの形へ変更する。
+    current_time = dt.now()
+    current_time_str = current_time.strftime('%Y/%m/%d')
+    #＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+    #テスト的に日付を強制合わせする。
+    # current_time_str = '2021/04/17'
+    #＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
+    #LINEのuser_idに紐付いたスプレッドシートのシート名指定して開く。
     #ワークシート名を指定
-    SP_SHEET = seat_dict[user_id]
-
-        #共有設定したスプレッドシートを開く
-    sh = gc.open_by_key(SPREADSHEET_KEY)
-
+    SP_SHEET = consts.LINE_USER_ID_DICT[user_id]
+    #共有設定したスプレッドシートを開く
+    SP_SH = GSPREAD_GC.open_by_key(consts.GSPREAD_SPREADSHEET_KEY)
     #ワークシートの選択
-    worksheet = sh.worksheet(SP_SHEET)
-
+    SP_WORKSHEET = SP_SH.worksheet(SP_SHEET)
     #スプレットシートの全データを取得
-    data = worksheet.get_all_values()
+    data = SP_WORKSHEET.get_all_values()
 
     #上から２列目を無視上から１列目をカラムとする。indexは開催年月日とする。
     df = pd.DataFrame(data[2:],columns=data[1]).set_index('開催年月日')
@@ -94,7 +70,9 @@ def send_game(user_id:str) -> dict:
     #現在の年月日がスプレッドシートの開催年月日のデータと一致する値があるなら現在年月日を代入（問題なし)
     if current_time_str in list(df.index.values):
         edit_date = current_time_str
-    #現在の年月日がスプレッドシートの開催年月日のデータにない場合は、近い未来の日程を取得する。※ここいつかバグるな・・・
+    #現在の年月日がスプレッドシートの開催年月日のデータにない場合は、近い未来の日程を取得する。
+    # NOTE:※ここいつかバグるな・・・
+    #      自作した近未来の取得方法。現状は上手く行っているが、どこでバグるか・・・
     else:
         current_time_rep = current_time_str.replace('/','')
         df_index_list = [ _.replace('/','') for _ in list(df.index.values)]
@@ -121,17 +99,16 @@ def send_game(user_id:str) -> dict:
 
     #編集する内容を記載する。
     #セルを取得して勝負カラムのチェック状態を調べる。
-    sell_bool_type = worksheet.acell(f'M{cell_index_no}').value
+    cell_bool_type = SP_WORKSHEET.acell(f'M{cell_index_no}').value
 
     #FALSE=勝負にチェック　TRUE=勝負のチェックを外す
-    if sell_bool_type == 'FALSE':
+    if cell_bool_type == 'FALSE':
         #セルを指定して書込む
-        worksheet.update_acell(f'M{cell_index_no}','TRUE')
+        SP_WORKSHEET.update_acell(f'M{cell_index_no}','TRUE')
         is_game_or_cancel = '勝負'
     else:
-        worksheet.update_acell(f'M{cell_index_no}','FALSE')
+        SP_WORKSHEET.update_acell(f'M{cell_index_no}','FALSE')
         is_game_or_cancel = 'キャンセル'
-
 
     #編集した開催年月日を取得。YYYY/mm/dd⇨YYYY-mm-ddの形へ変換して
     return_date = edit_date.replace('/','-')
@@ -153,8 +130,6 @@ def send_game(user_id:str) -> dict:
 
     # SpreadSheet に格納したら、「どの日付の、どのレースを 勝負orキャンセルしたのか」を return
     return return_dict
-
-
 
 if __name__ == '__main__':
     print(send_game('U2d60dfb30b93c289b2fb32d92a3f29fd'))
