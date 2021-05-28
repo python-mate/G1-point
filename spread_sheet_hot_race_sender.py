@@ -70,15 +70,18 @@ def send_game(user_id:str) -> dict:
     #現在の年月日がスプレッドシートの開催年月日のデータと一致する値があるなら現在年月日を代入（問題なし)
     if current_time_str in list(df.index.values):
         edit_date = current_time_str
+
     #現在の年月日がスプレッドシートの開催年月日のデータにない場合は、近い未来の日程を取得する。
     # NOTE:※ここいつかバグるな・・・
     #      自作した近未来の取得方法。現状は上手く行っているが、どこでバグるか・・・
     else:
+        #今の年月日とスプレッドの開催年月日を取得。
         current_time_rep = current_time_str.replace('/','')
         df_index_list = [ _.replace('/','') for _ in list(df.index.values)]
-        #下記変数に空のリストを定義。と空文字を定義。
-        date_survey_list_yyyy = date_survey_list_mm =date_survey_list_dd =[]
+        #下記変数に空のリストを定義。と edit_dateに空文字を定義。
+        date_survey_list_yyyy = date_survey_list_mm = date_survey_list_dd = []
         edit_date = ''
+
         #①:年部分を比較し一致するデータのみリスト化
         date_survey_list_yyyy =[yyyy for yyyy in df_index_list if current_time_rep[0:4] == yyyy[0:4]]
         #②:月部分を比較し一致するデータのみリスト化
@@ -87,11 +90,15 @@ def send_game(user_id:str) -> dict:
         date_survey_list_dd =[dd for dd in date_survey_list_mm if int(current_time_rep[6:8]) < int(dd[6:8])]
         #④:③に値があるなら一番若いindexの値を編集する日程とする。
         if len(date_survey_list_dd) > 0:
-            edit_date = str(date_survey_list_dd[0])[0:4]+'/'+ str(date_survey_list_dd[0])[4:6]+'/'+str(date_survey_list_dd[0])[6:8]
+            closest_date = date_survey_list_dd[0]
+            edit_date = f'{closest_date[0:4]}/{closest_date[4:6]}/{closest_date[6:8]}'
         #⑤:③に値がない場合は、②で取得したデータの次の値を取得する。
+        #NOTE:これは、自分で書いたのかww!!どーいう意味やっけか・・・
+        #　　　月→日で検索して開催日程が存在しないなら、月まで一致している最後の開催日の
+        #　　　次の開催日を指定しているはず。
         else:
             edit_date = date_survey_list_yyyy[date_survey_list_yyyy.index(date_survey_list_mm[-1])+1]
-            edit_date = edit_date[0:4]+'/'+ edit_date[4:6]+'/'+edit_date[6:8]
+            edit_date = f'{edit_date[0:4]}/{edit_date[4:6]}+{edit_date[6:8]}'
 
     # 開催年月日が一致するindex番号を取得
     # スプレッドシートのフォーマット状　取得したインデックスに３加算した値がセルの位置
