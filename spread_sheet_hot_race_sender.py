@@ -36,7 +36,7 @@ GSPREAD_GC = gspread.authorize(GSPREAD_CREDENTIAL)
 def send_game(user_id:str) -> dict:
     """
     この関数が呼び出されると、user_idに紐づいたワークシートの
-    '勝負'のカラムにTUREを入れる（チェックのこと）
+    '勝負'のカラムにTRUEを入れる（チェックのこと）
     returnは、辞書型で返す。
     return_dict = dict(
         date = return_date,(日付)
