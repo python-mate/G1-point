@@ -27,7 +27,6 @@ def run():
     #       ただし、レース結果の出ていない日にはやることが無いです。
     #       その是非を、 netkeiba_scraper_arguments_retreiver に尋ねています。
     today_yyyymmdd = utils.get_today_jst('%Y-%m-%d')
-    today_yyyymmdd = '2021-12-19'
     race_information = netkeiba_scrape_arguments_retreiver.retreive(today_yyyymmdd)
     logger.debug(f'Result of "netkeiba_scrape_arguments_retreiver": {race_information}')
 
