@@ -110,11 +110,14 @@ def retreive(race_held_yyyy_mm_dd):
     # 次回のレース日程とレース名を取得
     cell_index_no = 0
     cell_index_no = df_accurate_decision.index.get_loc(acquisition_date)
-    next_race_date = df_accurate_decision.index.values[cell_index_no + 1]
-    next_race_name = df_accurate_decision.iat[cell_index_no + 1,0]
+    try:
+        next_race_date = df_accurate_decision.index.values[cell_index_no + 1]
+        next_race_name = df_accurate_decision.iat[cell_index_no + 1,0]
+    except:
+        next_race_date = 'ありません。'
+        next_race_name = '次回は、来年の分'
 
     # この print の中に、データがきちんと入るように作ってほしい
-
     line_accurate_report = ('【' + race_name + '的中報告】\n' + print_name +'\n'
     +'\n'+'※次回のG1ポイントレースは、\n'
     + next_race_date + ':' + next_race_name + 'です。\n'
@@ -127,4 +130,4 @@ def retreive(race_held_yyyy_mm_dd):
 
 
 if __name__ == '__main__':
-    print(retreive('2021-05-23'))
+    print(retreive('2021-12-19'))
